@@ -114,7 +114,7 @@ In the chat panel, simply type:
 ```
 Let's get started
 ```
-Your AI assistant will introduce itself and ask you to upload your CV, paste your LinkedIn profile, or share any other real material — it builds your profile from that (never invents experience), then asks where you're job hunting (job sites are regional) before showing you how to find jobs and tailor your CV.
+Your AI assistant will introduce itself and ask you to upload your CV, paste your LinkedIn profile, or share any other real material (PDFs, Word docs, Markdown, plain text — whatever format is easiest for you). It builds your profile from that (never invents experience), then asks where you're job hunting (job sites are regional) before showing you how to find jobs and tailor your CV.
 
 ---
 
