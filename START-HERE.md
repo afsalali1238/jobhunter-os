@@ -76,12 +76,15 @@ instead of faking it.
 
 ## 🧩 Using a different AI tool? (optional)
 
-The recommended path is **Cursor** because it's free and easy. But this works anywhere:
+The recommended path is **Cursor** because it's free and easy. But this works anywhere —
+support for auto-discovering the skills just varies by tool:
 
-- **Claude (Cowork):** Connect this folder, then type `Let's get started`. *Even simpler — no code editor, just chat.*
-- **Antigravity:** Open the folder, then type `Let's get started`.
+- **Claude (Cowork):** Connect this folder, then type `Let's get started`. *Even simpler — no code editor, just chat.* Skills auto-load via `.claude/skills/`.
+- **Cursor:** Skills auto-load via `.cursor/rules/`.
+- **Antigravity or anything else:** Open the folder and type `Let's get started` — it reads `AGENTS.md` directly. If it doesn't pick the skills up on its own, just say "read AGENTS.md and follow the skills in `skills/`" once at the start.
 
-All three read the same instructions, so the experience is identical.
+All of them follow the same underlying instructions (`AGENTS.md` + `skills/`), so the
+experience should feel the same either way — Claude and Cursor just get there automatically.
 
 ---
 

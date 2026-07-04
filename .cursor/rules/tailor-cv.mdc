@@ -1,6 +1,7 @@
 ---
-name: tailor-cv
-description: Rewrite the user's CV to highlight the specific experiences and keywords relevant to a target job description, and produce it as a genuinely ATS-safe .docx (not just a nicely formatted document — one that actually parses cleanly in applicant tracking systems).
+description: Rewrite the user's CV to highlight the specific experiences and keywords relevant to a target job description, and produce it as a genuinely ATS-safe .docx. Apply when the user asks to "tailor my CV" or provides a JD for a CV.
+globs:
+alwaysApply: false
 ---
 # Tailor CV
 
@@ -13,7 +14,7 @@ When the user asks you to "tailor my CV for [Company/Role]", "write a CV for thi
 
 ## Steps
 1. Read `profile/experience-bank.md` to get the baseline experience — this should be built
-   from the user's real CV/LinkedIn material (see the `onboarding` skill). If it still looks
+   from the user's real CV/LinkedIn material (see the `onboarding` rule). If it still looks
    like the blank template or is clearly thin, stop and tell the user their profile needs to
    be filled in properly first — don't tailor from an empty or near-empty base.
 2. Get the real JD — open the actual link, or use the text the user pasted/the job noted in
@@ -43,8 +44,8 @@ When the user asks you to "tailor my CV for [Company/Role]", "write a CV for thi
      The script always emits single-column layout, standard fonts/headings, and no
      tables/graphics/headers-footers — the ATS rules below are enforced by the script itself,
      not left to chance. Requires `pip install python-docx --break-system-packages` if not
-     already available in this environment; if you have a dedicated `docx` skill/tool in your
-     IDE instead, you can use that as an alternative — the ATS rules still apply.
+     already available in this environment; if you have a dedicated docx tool in Cursor
+     instead, you can use that as an alternative — the ATS rules still apply.
    - If neither python-docx nor a docx tool is available, tell the user plainly and fall back
      to offering the Markdown file plus a print-ready HTML version (see step 7) rather than
      silently skipping the docx.

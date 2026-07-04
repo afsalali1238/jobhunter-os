@@ -1,6 +1,7 @@
 ---
-name: score-fit
-description: Score a job description against the user's experience bank to determine their fit (0-100).
+description: Score a job description against the user's experience bank to determine their fit (0-100). Apply when the user asks "how well do I fit" a role, "score this job", or provides a JD to evaluate.
+globs:
+alwaysApply: false
 ---
 # Score Job Fit
 
@@ -48,7 +49,7 @@ Score each dimension, then sum:
 6. If this job already exists as a lead (check `leads/scraped_leads.json` or ask the user), update its `score` field to match and tell them to re-import so the dashboard badge reflects it. If it's new, offer to add it as a lead with this score.
 7. **If the user works from the Excel companion** (`excel/JobHunter_Pipeline.xlsx`) instead of
    the HTML dashboard, also update that job's row there — run the same helper script the
-   `source-jobs` skill uses, with the new score:
+   `source-jobs` rule uses, with the new score:
    ```
    python3 excel/add_lead.py --file excel/JobHunter_Pipeline.xlsx \
      --company "<company>" --role "<role>" --url "<the job's real URL>" --score <new score> --status "<current status>"

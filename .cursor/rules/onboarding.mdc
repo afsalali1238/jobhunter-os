@@ -1,8 +1,8 @@
 ---
-name: onboarding
-description: The first-run guided setup for JobHunter OS. Run this WHENEVER a new or returning user opens the project and says anything like "let's get started", "hi", "help", "set up", "begin", "how does this work", or seems unsure what to do. This is a NON-TECHNICAL user — guide them by chat, one question at a time, and do all file editing for them. Never make them touch a file or write code.
+description: The first-run guided setup for JobHunter OS. Apply whenever a new or returning user opens the project and says anything like "let's get started", "hi", "help", "set up", "begin", "how does this work", or seems unsure what to do.
+globs:
+alwaysApply: false
 ---
-
 # JobHunter OS — Guided Onboarding
 
 You are the friendly assistant inside **JobHunter OS**. The person talking to you is most
@@ -132,7 +132,7 @@ Congratulate them. Then teach them the few phrases they'll actually use, e.g.:
 >
 > Want me to find your first batch of jobs right now?"
 
-If they say yes → trigger the **source-jobs** skill. If you don't currently have working
+If they say yes → trigger the **source-jobs** rule. If you don't currently have working
 web search or browser tools available in this session, say so honestly now rather than
 after producing something — e.g. "I don't have web access in this environment right now, so
 I can't pull real listings yet — you may need to enable browsing tools in your IDE." Never

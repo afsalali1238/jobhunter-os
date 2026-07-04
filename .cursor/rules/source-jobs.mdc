@@ -1,6 +1,7 @@
 ---
-name: source-jobs
-description: Use real web search / browser tools to find ACTUAL live job postings — with real, working links — matching the user's target-roles, and save them to leads/scraped_leads.json. Never fabricates listings.
+description: Use real web search / browser tools to find ACTUAL live job postings — with real, working links — matching the user's target-roles, and save them to leads/scraped_leads.json. Never fabricates listings. Apply when the user asks to "find me jobs" or "source jobs".
+globs:
+alwaysApply: false
 ---
 # Source Jobs
 
@@ -33,8 +34,7 @@ postings with real URLs.
 ### 2. Fall back to the browser when search isn't enough
 Bulk/API-style search won't always work — some boards block indexing, require JS to render
 results, or need you to actually apply filters. When that happens, use whatever real browser
-tool you have access to in this environment (e.g. a Chrome extension / browser MCP, or your
-IDE's built-in browser tooling) to:
+tool you have access to in this environment (e.g. Cursor's browser tooling) to:
 1. Navigate to the actual job board (LinkedIn Jobs, or the regional site agreed in
    `target-roles.md`).
 2. Enter the real search — the target title + region — using the site's own search box and
@@ -64,7 +64,7 @@ surfaced more real candidates than the cap:
 
 ### 5. Score for real — open the actual JD
 For each posting that made the cut, open the actual job description (the real page/link) and
-run the same evaluation as the **score-fit** skill against `profile/experience-bank.md`.
+run the same evaluation as the **score-fit** rule against `profile/experience-bank.md`.
 **Do not score from the title or a search snippet alone** — that's a guess wearing a number,
 and the user relies on this score to decide where to spend their time. If you genuinely run
 out of turn budget partway through, save the remainder with `"score": null` rather than
@@ -119,4 +119,11 @@ You must output a JSON file containing the jobs in this exact structure:
       "title": "Software Engineer",
       "url": "https://linkedin.com/jobs/view/12345",
       "score": 82,
-      "status": "Scou
+      "status": "Scouted",
+      "applyStatus": null,
+      "addedDate": "MM/DD/YYYY"
+    }
+  ]
+}
+```
+*(This is a schema example, not sample data to copy — "Example Corp" and that URL are placeholders showing the shape. Every real job you write here must be one you actually found this session. Ensure `id` is unique for each job, like a numeric timestamp string. `score` is 0-100 — the dashboard bands it automatically: ≥80 HOT, 70-79 Strong, 60-69 Consider, <60 Low. Set `null` only if you genuinely haven't opened the JD yet.)*

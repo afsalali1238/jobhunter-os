@@ -28,41 +28,11 @@ When the user asks you to "tailor my CV for [Company/Role]", "write a CV for thi
      the JD (tools, certifications, methodologies, job-title language) and confirm each one
      you used is genuinely backed by the profile before including it.
 4. Save the working copy as clean Markdown to `output/cvs/[Company]_[Role]_CV.md` — this is
-   your editable master and what you show the user first for feedback.
-5. Once the user is happy with the content, produce the **submission-ready file** as a real
-   `.docx` at `output/cvs/[Company]_[Role]_CV.docx`, following the ATS rules below exactly.
-   Use a `docx` skill/tool if you have one available; otherwise generate it directly
-   (e.g. via `python-docx`) — either way, the rules in the next section are non-negotiable,
-   not just formatting preferences.
-6. Present both files to the user, confirm the `.docx` is what they should actually upload to
-   job applications, and ask if they'd like any revisions. If you had to skip anything the JD
-   asked for, say so explicitly here.
-
-## ATS-safe formatting rules (apply to the `.docx`, no exceptions)
-A CV that *looks* professional but confuses an ATS parser is worse than a plain one — the
-recruiter never sees it. Follow every rule below:
-
-- **Single column, linear layout.** No multi-column sections, no side-bar for skills/contact,
-  no tables used for layout (a real table for e.g. a skills matrix will scramble reading
-  order in many parsers — use a plain bullet or comma-separated list instead).
-- **No text boxes, no headers/footers for content.** Contact info (name, phone, email,
-  location, LinkedIn URL) goes as plain text at the top of the document body — many ATS
-  parsers skip header/footer regions entirely, silently dropping contact details.
-- **No graphics, icons, photos, logos, or decorative lines/borders.** They add nothing an ATS
-  can read and can break parsing.
-- **Standard, exact section headings** — use these words, not creative variants: `Summary`,
-  `Experience` (or `Work Experience`), `Skills`, `Education`, `Certifications`. ATS systems
-  pattern-match on common headings; "My Journey" or "What I Bring" won't be recognized.
-- **Standard fonts only** — Calibri, Arial, or Times New Roman. Body text 10.5-11pt, name
-  14-16pt. No script/decorative fonts.
-- **Consistent bullet character** (a plain `•` or `-`) throughout, never mixed.
-- **Consistent date format** — `Mon YYYY – Mon YYYY` (e.g. `Jan 2021 – Mar 2024`) for every
-  role, not a mix of formats.
-- **Reverse-chronological order**, most recent role first.
-- **1-2 pages.** Cut before you compress the font size below 10.5pt or the margins below
-  ~0.7".
-- **Plain filename**, no spaces or special characters beyond underscores (already the
-  `[Company]_[Role]_CV.docx` convention above).
-- Before presenting, do a final self-check: could every line be read correctly if the whole
-  document were flattened to plain text top-to-bottom? If a table, column, or text box would
-  make that ambiguous, restructure it.
+   your editable draft and what you show the user first for feedback.
+5. Once the user is happy with the content, produce the **submission-ready `.docx`** — this is
+   the file they should actually upload to applications, and it needs to be genuinely ATS-safe,
+   not just nicely formatted.
+   - **Use the bundled script, don't hand-roll python-docx layout code.** Write a small JSON
+     file matching the schema documented at the top of `scripts/build_ats_docx.py` (name,
+     contact line, headline, summary, experience with bullets, skills, education,
+     certifications — 

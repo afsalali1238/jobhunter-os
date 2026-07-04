@@ -35,9 +35,13 @@ Greet them by introducing what this is, in 3-4 friendly sentences. Example tone:
 > write your outreach, and keep it all on a simple dashboard. First let's build your master
 > profile so everything I write sounds like *you* and is 100% accurate. Ready?"
 
-Then check: have they already filled in `profile/experience-bank.md`?
-- If it already has real content → say "Looks like your profile's already set up!" and skip to **Stage 5**.
-- If it's still the blank template → continue to Stage 1.
+Then check **all three** profile files, not just one — a returning user may have filled in
+some but not others, and skipping straight to the end would silently strand them without a
+region or preferences:
+- `profile/experience-bank.md` filled in? If not, start at Stage 1.
+- If experience-bank.md is filled but `profile/target-roles.md` has no region/boards → jump to **Stage 3**.
+- If experience-bank.md and target-roles.md are both filled but `profile/preferences.md` is still blank → jump to **Stage 5**.
+- If all three are filled → say "Looks like your profile's already set up!" and go straight to **Stage 6**.
 
 ### Stage 1 — Get the real source material (this replaces guesswork)
 Ask for whichever of these they have — accept any combination, don't require all three:
@@ -92,9 +96,17 @@ LinkedIn + Indeed everywhere):
 - **United Kingdom** → LinkedIn, Indeed UK, Reed, CV-Library.
 - **Australia / NZ** → LinkedIn, SEEK, Indeed.
 - **Remote / worldwide** → LinkedIn (remote filter), We Work Remotely, Remote OK.
-- Anywhere else → propose LinkedIn + the 1-2 most-used general job sites you know for that
-  country, and say so plainly if you're not confident which ones dominate there — ask the
-  user if they already have a preferred site.
+- **Germany / DACH** → LinkedIn, StepStone, Xing Jobs, Indeed Germany.
+- **France** → LinkedIn, Indeed France, Welcome to the Jungle, Pôle Emploi.
+- **Netherlands / Benelux** → LinkedIn, Indeed Netherlands, Werkenbij.
+- **EU (general)** → LinkedIn, Indeed, EURES, Glassdoor.
+- **Singapore** → LinkedIn, JobStreet, Indeed Singapore, MyCareersFuture.
+- **Southeast Asia (general)** → LinkedIn, JobStreet, JobsDB, Indeed.
+- **Japan** → LinkedIn, GaijinPot, Indeed Japan, Rikunabi.
+- **South Korea** → LinkedIn, Saramin, JobKorea, Indeed Korea.
+- **Africa (general)** → LinkedIn, Jobberman, BrighterMonday, Indeed.
+- **Latin America (general)** → LinkedIn, Computrabajo, Indeed, InfoJobs.
+- Anywhere else → propose LinkedIn + Indeed for that country. Be upfront with the user if you're not confident which specialist boards dominate there — ask them: "Do you have a preferred local job site? I want to make sure I'm searching the right places for [country]."
 
 Confirm the list with them before saving ("I'll search LinkedIn, Bayt, and GulfTalent for you
 — sound right, or is there a site you'd add/drop?"), then save both the region and the agreed
@@ -126,11 +138,4 @@ after producing something — e.g. "I don't have web access in this environment 
 I can't pull real listings yet — you may need to enable browsing tools in your IDE." Never
 paper over that gap with invented listings.
 
-## Returning users
-If someone returns and says "hi" / "what now", don't re-run setup. Check their profile is
-filled, then briefly remind them of the commands and ask what they'd like to do.
-
-## Tone calibration
-Encouraging, never robotic. Celebrate small wins ("Nice — that automation project is a
-great selling point 👏"). This person may be stressed about job hunting; be the calm,
-capable helper in their corner.
+**Wire the dashboard profile too.** 

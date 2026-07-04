@@ -87,7 +87,14 @@ Ships empty, same as the dashboard — no sample rows to clear out. Just tell yo
 Download the ZIP of this repository and extract it to a folder on your computer.
 
 ### Step 2: Open in your AI IDE
-We recommend **Cursor** (free, cursor.com), but Claude (Cowork) and Antigravity also work perfectly.
+This works in any AI coding tool, though how well each one auto-discovers the skills varies:
+- **Claude Code / Cowork** — native skill discovery via `.claude/skills/`, the strongest support.
+- **Cursor** — native rule discovery via `.cursor/rules/*.mdc`, also fully wired up.
+- **Antigravity** or anything else — reads `AGENTS.md` and `skills/` directly; if your tool
+  doesn't pick these up on its own, just tell it to "read AGENTS.md and follow the skills in
+  `skills/`" once at the start.
+
+We recommend **Cursor** (free, cursor.com) if you don't already have a preference:
 1. Install Cursor and open it.
 2. Go to **File → Open Folder...** and select the folder you just extracted.
 3. Open the **Chat** panel on the right.

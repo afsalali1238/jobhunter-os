@@ -41,6 +41,7 @@ const kpiOffers = document.getElementById('kpi-offers');
 const btnExport = document.getElementById('btn-export');
 const btnImport = document.getElementById('btn-import');
 const importFile = document.getElementById('import-file');
+const onboardingImportLink = document.getElementById('onboarding-import-link');
 
 // --- INITIALIZATION ---
 function init() {
@@ -100,9 +101,9 @@ addJobForm.addEventListener('submit', (e) => {
     const notes = (document.getElementById('job-notes') || {}).value || '';
     const interviewDate = (document.getElementById('job-interview-date') || {}).value || null;
 
-    // Fix 5: Check for duplicate URL before adding
-    const normalizedUrl = url.trim().toLowerCase();
-    if (normalizedUrl && jobs.some(j => (j.url || '').trim().toLowerCase() === normalizedUrl)) {
+    // Fix 5: Check for duplicate URL before adding (ignoring tracking query params/fragments)
+    const normalizedUrl = normalizeUrl(url);
+    if (normalizedUrl && jobs.some(j => normalizeUrl(j.url) === normalizedUrl)) {
         alert('A job with this URL already exists in your pipeline.');
         return;
     }
@@ -133,6 +134,23 @@ function safeUrl(url) {
     if (typeof url !== 'string') return null;
     const trimmed = url.trim();
     return /^https?:\/\//i.test(trimmed) ? trimmed : null;
+}
+
+// --- URL NORMALIZATION (for de-dup) ---
+// Strips query string/fragment and a trailing slash before comparing, so the same posting
+// re-listed with a different tracking param (?utm_source=...) is still caught as a duplicate.
+// Mirrors excel/add_lead.py's normalize_url() so the dashboard and the Excel companion agree
+// on what counts as "the same lead".
+function normalizeUrl(url) {
+    if (!url) return '';
+    let u = url.trim().toLowerCase();
+    try {
+        const parsed = new URL(u);
+        u = `${parsed.protocol}//${parsed.host}${parsed.pathname.replace(/\/$/, '')}`;
+    } catch (e) {
+        // Not a valid absolute URL — fall back to the raw trimmed/lowercased string.
+    }
+    return u;
 }
 
 // Same reasoning for text fields: escape before dropping into innerHTML so an imported
@@ -368,6 +386,13 @@ btnImport.addEventListener('click', () => {
     importFile.click();
 });
 
+if (onboardingImportLink) {
+    onboardingImportLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        importFile.click();
+    });
+}
+
 importFile.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if(!file) return;
@@ -383,24 +408,29 @@ importFile.addEventListener('change', (e) => {
                     profile = contents.profile;
                 }
 
-                // Fix 2 + 5: Merge new jobs, deduplicating by URL
-                const existingUrls = new Set(jobs.map(j => (j.url || '').trim().toLowerCase()));
+                // Fix 2 + 5: Merge new jobs, deduplicating by URL (ignoring tracking query params)
+                const existingUrls = new Set(jobs.map(j => normalizeUrl(j.url)));
                 let added = 0;
                 let skipped = 0;
                 contents.jobs.forEach(newJob => {
-                    const normalizedUrl = (newJob.url || '').trim().toLowerCase();
-                    if (normalizedUrl && existingUrls.has(normalizedUrl)) {
+                    const normalized = normalizeUrl(newJob.url);
+                    if (normalized && existingUrls.has(normalized)) {
                         skipped++;
                     } else {
                         // Ensure imported jobs have an id
                         if (!newJob.id) newJob.id = Date.now().toString() + Math.random().toString(36).slice(2, 6);
                         jobs.push(newJob);
-                        if (normalizedUrl) existingUrls.add(normalizedUrl);
+                        if (normalized) existingUrls.add(normalized);
                         added++;
                     }
                 });
 
                 saveData();
+                // If this import came from the onboarding "import instead" link and it carried
+                // a real profile, complete onboarding now instead of leaving the modal up.
+                if (profile && appContainer.classList.contains('hidden')) {
+                    showApp();
+                }
                 alert(`Imported ${added} new job${added !== 1 ? 's' : ''}${skipped > 0 ? ` (${skipped} duplicate${skipped !== 1 ? 's' : ''} skipped)` : ''}.`);
             } else {
                 alert("Invalid format. Expected a JSON file with a 'jobs' array.");

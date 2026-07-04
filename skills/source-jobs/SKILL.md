@@ -81,12 +81,22 @@ the user how many were new vs. already tracked (e.g. *"Found 12 postings — 9 a
 already in your tracker."*).
 
 **If the user has told you they prefer the Excel companion** (`excel/JobHunter_Pipeline.xlsx`)
-over the HTML dashboard, also append each new lead as a new row at the bottom of the
-`PipelineTable` on the **Pipeline** sheet, in the same column order (Company, Role, Fit
-Score, Band, Status, Applied Date, Job URL) — leave the Band column's formula intact (copy
-it down from the row above, don't hardcode the band text) so it keeps calculating. Do this
-in addition to `leads/scraped_leads.json`, not instead of it, unless the user says they only
-want Excel.
+over the HTML dashboard, write each new lead into it using the bundled helper script instead of
+editing the spreadsheet's XML by hand — that's fragile and easy to get subtly wrong (broken
+table range, wrong column, corrupted formatting). For each lead, run:
+
+```
+python3 excel/add_lead.py --file excel/JobHunter_Pipeline.xlsx \
+  --company "<real company>" --role "<real title>" --url "<real URL>" \
+  --score <0-100 or omit if not yet scored> --status Scouted
+```
+
+This appends a new row (or updates the matching row in place if that URL is already there),
+computes the Band text itself from the score, and expands the table range — you never need to
+touch Band manually; there's no formula to preserve, it's plain text colored by the sheet's
+existing conditional formatting. (Requires `pip install openpyxl --break-system-packages` if
+not already available.) Do this in addition to `leads/scraped_leads.json`, not instead of it,
+unless the user says they only want Excel.
 
 ### 7. Hand off honestly
 Tell the user how many real postings you found and from where (e.g. "12 real postings from
