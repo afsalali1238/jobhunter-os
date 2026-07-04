@@ -12,6 +12,16 @@ The AI agent is the engine. The dashboard is your UI. All data stays local on yo
 
 ---
 
+## 🏆 Why JobHunter OS? (Key Strengths)
+
+- **Privacy-First & Offline**: Keeping all your career history locally means you aren't feeding PII into a third-party SaaS platform. The dashboard runs completely offline via `localStorage`.
+- **Genuinely ATS-Safe CV Generator**: Most AI wrappers generate resumes that fail Workday or Greenhouse parsers. Our bundled `build_ats_docx.py` script enforces strict ATS rules (no tables, single column, standard fonts) programmatically.
+- **Concrete Scoring Rubric**: Instead of random guesswork, the explicit 100-point rubric forces the AI to show its math (Core Skills, Experience, Industry, etc.), making the "Fit Score" actionable.
+- **Dual-Track Tracking**: We offer both a gorgeous HTML Kanban dashboard and a native Excel spreadsheet (`JobHunter_Pipeline.xlsx`). Our sync script intelligently bridges the gap so you can use whichever tool you prefer without breaking formulas.
+- **AI as an Assistant, Not a Replacement**: The system explicitly forces the AI to read *real* job descriptions and forbids fabricating experience. No AI hallucination traps.
+
+---
+
 ## 🎬 See it in action
 
 ![JobHunter OS demo](assets/demo.gif)
@@ -111,8 +121,10 @@ Your AI assistant will introduce itself and ask you to upload your CV, paste you
 ## 🧭 Navigating the System
 
 - **Dashboard**: Double-click `dashboard/index.html` to open your offline Kanban board. Track your applications, scouted roles, and interviews here. No login required.
+- **Excel (`excel/`)**: The `JobHunter_Pipeline.xlsx` spreadsheet for those who prefer native tables. Includes `add_lead.py` to seamlessly sync leads from the AI.
 - **Profile (`profile/`)**: This holds your target roles, experience bank, and preferences. The agent reads this to tailor your CVs and find matching jobs.
 - **Skills (`skills/`)**: The brains of the operation. These markdown files contain the exact prompts and steps the agent follows when you ask it to "find jobs" or "tailor my CV". Editing these files changes the agent's behavior.
+- **Scripts (`scripts/`)**: Core automation scripts, like `build_ats_docx.py`, which enforce deterministic formatting rules (like ATS compliance) so the AI doesn't have to guess.
 - **Outputs (`output/` & `leads/`)**: The agent saves tailored CVs, cover letters, and scraped job leads into these folders.
 
 ## ✨ Capabilities
@@ -130,4 +142,4 @@ Once set up, you can ask your agent to:
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 Built by **Afsal Ali** — AI-Ops & Automation.
-[LinkedIn](https://linkedin.com/in/your-handle) · MIT Licensed
+[LinkedIn](https://linkedin.com/in/afsalali1238) · MIT Licensed

@@ -36,8 +36,7 @@ Score each dimension, then sum:
 | Education & certifications | 10 | Does the user meet the education and certification requirements? |
 | Location & logistics | 5 | Is the user in the right location, willing to relocate, or is it remote-compatible? |
 
-> **Note:** Show the per-dimension breakdown to the user alongside the total so they can see
-> exactly where points were gained or lost. This makes the score actionable, not just a number.
+> **Note:** For partial matches, award partial points (e.g., if a user meets half the required years of experience, award 10/20 points). Show the per-dimension breakdown to the user alongside the total so they can see exactly where points were gained or lost. This makes the score actionable, not just a number.
 
 5. Provide a summary of the analysis to the user in a clear format:
    - **Fit Score**: [0-100]

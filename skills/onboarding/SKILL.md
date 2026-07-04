@@ -143,11 +143,14 @@ separate first-run screen that only asks for a name and target roles — it does
 read `profile/experience-bank.md`. So that the user doesn't have to type their name twice, write
 (or update) `leads/scraped_leads.json` with a real `"profile"` object built from what you just
 learned, e.g. `"profile": {"name": "<their real name>", "roles": "<their target roles, comma
-separated>"}` — never a placeholder. When they open `dashboard/index.html` and click "Import
-your leads file instead" on the welcome screen (or use the regular Import button later), this
-profile is picked up automatically and they skip the manual form. If you haven't sourced any
-jobs yet, it's fine to write this file with an empty `"jobs": []` array just to carry the
-profile over — tell the user you did this and why.
+separated>"}` — never a placeholder. 
+
+**CRITICAL:** Before writing this file, you MUST check if `leads/scraped_leads.json` already exists. 
+If it does, read it and preserve the existing `"jobs"` array. Do not overwrite it, or you will delete the user's entire pipeline! 
+Only add or update the `"profile"` field. 
+If the file does not exist, it's fine to write this file with an empty `"jobs": []` array just to carry the
+profile over — tell the user you did this and why. When they open `dashboard/index.html` and click "Import
+your leads file instead", this profile is picked up automatically and they skip the manual form.
 
 ## Returning users
 If someone returns and says "hi" / "what now", don't re-run setup. Check their profile is

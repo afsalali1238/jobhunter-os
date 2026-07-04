@@ -78,9 +78,3 @@ sounded right in the docs but didn't have real mechanics behind them yet:
 - **Corrected the README/START-HERE multi-IDE claim** — it previously said Cursor and
   Antigravity "work perfectly" alongside Claude, which overstated Antigravity's (unverified,
   pointer-file-only) support. Now states support tiers honestly.
-- **Note on a concurrent-edit incident:** during this pass, another in-progress edit session
-  against this same folder left several files truncated mid-sentence on disk (a real, verified
-  corruption — not a false alarm). Nothing was lost: the last git commit had the full, good
-  content, and all affected files were restored from it before any further work continued. If
-  you're running more than one AI tool against this folder at the same time, do it one at a
-  time — concurrent writes to the same files is the likely cause.
