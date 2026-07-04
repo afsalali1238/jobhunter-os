@@ -38,7 +38,7 @@ When the user asks you to "tailor my CV for [Company/Role]", "write a CV for thi
      certifications — all pulled only from what you already wrote in step 3/4, nothing new),
      then run:
      ```
-     python3 scripts/build_ats_docx.py --input <tmp_cv_data.json> --output output/cvs/[Company]_[Role]_CV.docx
+     python3 scripts/build_ats_docx.py --input <tmp_cv_data.json> --output output/cvs/[Company]_[Role]_CV.docx --pdf
      ```
      The script always emits single-column layout, standard fonts/headings, and no
      tables/graphics/headers-footers — the ATS rules below are enforced by the script itself,
@@ -48,14 +48,14 @@ When the user asks you to "tailor my CV for [Company/Role]", "write a CV for thi
    - If neither python-docx nor a docx tool is available, tell the user plainly and fall back
      to offering the Markdown file plus a print-ready HTML version (see step 7) rather than
      silently skipping the docx.
-6. Present the file(s) to the user, confirm the `.docx` is what they should actually upload to
+6. Present the file(s) to the user, confirm the `.pdf` and `.docx` are what they should actually upload to
    job applications, and ask if they'd like any revisions. If you had to skip anything the JD
    asked for, say so explicitly here.
-7. Optionally, also offer a clean, print-ready HTML version (inline CSS, no external
+7. **Update the dashboard**: Open `leads/data.js` and find the job you just tailored the CV for. Update its `"cvPath"` property to point to the newly generated PDF (e.g., `"cvPath": "output/cvs/[Company]_[Role]_CV.pdf"`). This enables the "View CV" button on the dashboard.
+8. Optionally, also offer a clean, print-ready HTML version (inline CSS, no external
    dependencies) saved as `output/cvs/[Company]_[Role]_CV.html` for browser preview or
    printing to PDF — a nice-to-have alongside the `.docx`, not a replacement for it, since a
    browser "print to PDF" is not guaranteed to parse as cleanly in an ATS as a real `.docx`.
-
 ## ATS-safe formatting rules (what `scripts/build_ats_docx.py` enforces)
 A CV that *looks* professional but confuses an ATS parser is worse than a plain one — the
 recruiter never sees it. These are already built into the script; if you ever generate the

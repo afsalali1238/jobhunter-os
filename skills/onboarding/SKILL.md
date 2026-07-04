@@ -49,8 +49,7 @@ Ask for whichever of these they have — accept any combination, don't require a
 
 > "To build your profile properly, give me anything you've got:
 > • **Your CV** — drag and drop the file here (PDF, Word, whatever), or paste the text.
-> • **Your LinkedIn profile** — paste your profile URL, or copy-paste the text of your
->   profile (About, Experience, Skills sections), or export it as PDF and drop it here.
+> • **Your LinkedIn profile** — go to your LinkedIn profile, click 'More', select 'Save to PDF', and drop that PDF file here (do not just paste the URL, as LinkedIn blocks automated readers).
 > • **Anything else worth including** — a portfolio link, certifications, a project writeup,
 >   even a messy notes doc. More real material = a stronger, more accurate profile.
 >
@@ -119,7 +118,9 @@ file. Keep it light — 4-5 quick questions.
 
 ### Stage 5 — Preferences (`profile/preferences.md`)
 Quick: tone for their CV/outreach, cover-letter length, anything to always or never include,
-and (privately) salary expectation + notice period. Save to the file.
+and (privately) salary expectation + notice period. 
+**Crucially, ask them:** *"At what fit score (0-100) should I automatically build a tailored CV for a job? (Default is 70+)"*.
+Save all of this to the file.
 
 ### Stage 6 — The handoff (what they can do now)
 Congratulate them. Then teach them the few phrases they'll actually use, e.g.:
@@ -139,19 +140,16 @@ after producing something — e.g. "I don't have web access in this environment 
 I can't pull real listings yet — you may need to enable browsing tools in your IDE." Never
 paper over that gap with invented listings.
 
-**Wire the dashboard profile too.** The HTML dashboard (`dashboard/index.html`) has its own
-separate first-run screen that only asks for a name and target roles — it doesn't automatically
-read `profile/experience-bank.md`. So that the user doesn't have to type their name twice, write
-(or update) `leads/scraped_leads.json` with a real `"profile"` object built from what you just
-learned, e.g. `"profile": {"name": "<their real name>", "roles": "<their target roles, comma
-separated>"}` — never a placeholder. 
+**Wire the dashboard profile too.** The HTML dashboard (`dashboard/index.html`) automatically
+reads `leads/data.js` to render the interface instantly. So that the dashboard is populated with 
+their name and roles, write (or update) `leads/data.js` with a real `"profile"` object built from what you just
+learned, e.g. `window.JOBHUNTER_DATA = { "profile": {"name": "<their real name>", "roles": "<their target roles>"}, "jobs": [] };` — never a placeholder. 
 
-**CRITICAL:** Before writing this file, you MUST check if `leads/scraped_leads.json` already exists. 
-If it does, read it and preserve the existing `"jobs"` array. Do not overwrite it, or you will delete the user's entire pipeline! 
+**CRITICAL:** Before writing this file, you MUST check if `leads/data.js` already exists. 
+If it does, read it (by stripping the `window.JOBHUNTER_DATA = ` prefix to parse the JSON) and preserve the existing `"jobs"` array. Do not overwrite it, or you will delete the user's entire pipeline! 
 Only add or update the `"profile"` field. 
 If the file does not exist, it's fine to write this file with an empty `"jobs": []` array just to carry the
-profile over — tell the user you did this and why. When they open `dashboard/index.html` and click "Import
-your leads file instead", this profile is picked up automatically and they skip the manual form.
+profile over — tell the user you did this and why. When they open `dashboard/index.html` their profile is picked up automatically.
 
 ## Returning users
 If someone returns and says "hi" / "what now", don't re-run setup. Check their profile is

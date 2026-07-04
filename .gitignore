@@ -1,5 +1,6 @@
 # Personal data users generate locally — never commit
 leads/*.json
+leads/*.js
 output/cvs/*
 output/outreach/*
 !output/cvs/.gitkeep

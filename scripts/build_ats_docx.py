@@ -10,7 +10,7 @@ wording) and always emits a single-column, standard-font, standard-heading docum
 that follows the ATS rules in skills/tailor-cv/SKILL.md.
 
 Usage:
-  python3 scripts/build_ats_docx.py --input cv_data.json --output output/cvs/Acme_OpsManager_CV.docx
+  python3 scripts/build_ats_docx.py --input cv_data.json --output output/cvs/Acme_OpsManager_CV.docx [--pdf]
 
 Input JSON shape:
 {
@@ -35,7 +35,9 @@ Input JSON shape:
   "certifications": ["Cert One", "Cert Two"]
 }
 
-Requires: pip install python-docx --break-system-packages (if not already available).
+Requires: 
+  pip install python-docx --break-system-packages
+  pip install docx2pdf --break-system-packages (if --pdf is used, Windows/macOS only)
 """
 import argparse
 import json
@@ -161,6 +163,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", required=True, help="Path to a JSON file matching the schema in this script's docstring")
     ap.add_argument("--output", required=True, help="Path to write the .docx file")
+    ap.add_argument("--pdf", action="store_true", help="Generate a PDF version alongside the .docx (requires Windows/macOS and MS Word)")
     args = ap.parse_args()
 
     with open(args.input, "r", encoding="utf-8") as f:
@@ -168,6 +171,17 @@ def main():
 
     build(data, args.output)
     print(f"Wrote {args.output}")
+
+    if args.pdf:
+        try:
+            from docx2pdf import convert
+            pdf_path = args.output.replace(".docx", ".pdf")
+            convert(args.output, pdf_path)
+            print(f"Wrote {pdf_path}")
+        except ImportError:
+            print("ERROR: docx2pdf is not installed. Run: pip install docx2pdf --break-system-packages", file=sys.stderr)
+        except Exception as e:
+            print(f"ERROR: PDF conversion failed (ensure MS Word is installed): {e}", file=sys.stderr)
 
 
 if __name__ == "__main__":

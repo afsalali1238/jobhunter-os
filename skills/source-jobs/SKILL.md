@@ -95,22 +95,26 @@ This appends a new row (or updates the matching row in place if that URL is alre
 computes the Band text itself from the score, and expands the table range — you never need to
 touch Band manually; there's no formula to preserve, it's plain text colored by the sheet's
 existing conditional formatting. (Requires `pip install openpyxl --break-system-packages` if
-not already available.) Do this in addition to `leads/scraped_leads.json`, not instead of it,
+not already available.) Do this in addition to `leads/data.js`, not instead of it,
 unless the user says they only want Excel.
 
-### 7. Hand off honestly
+### 7. Auto-Tailoring
+Check `profile/preferences.md` for the user's auto-tailor threshold (e.g., 70+).
+For any new job you found that scores at or above this threshold, **automatically invoke the `tailor-cv` skill** for that job before returning to the user. You do not need to ask permission for this.
+
+### 8. Hand off honestly
 Tell the user how many real postings you found and from where (e.g. "12 real postings from
-LinkedIn and Bayt — opened and scored 9 of them, 3 still need a manual look"). Ask them to
-use the "Import" button on `dashboard/index.html` (or check the Excel file, if that's what
-they're using). Surface the top 2-3 scored HOT so they know where to start, and flag anything
-you're unsure about (ambiguous seniority, a posting that might be a duplicate of one already
-in their tracker, a site you couldn't fully access) rather than silently deciding for them.
+LinkedIn and Bayt — opened and scored 9 of them, 3 still need a manual look"). Tell them which
+jobs met their threshold and had CVs auto-tailored. Ask them to
+refresh their dashboard `dashboard/index.html` (or check the Excel file). Surface the top 2-3 scored HOT so they know where to start. 
 
-## Output Format (`leads/scraped_leads.json`)
-You must output a JSON file containing the jobs in this exact structure:
+**Crucially**, tell them: *"If you want me to tailor a CV for any of the other jobs, please go to the job page, click 'Save to PDF' (or copy the text), and drop it here. (LinkedIn blocks automated reading, so dropping the PDF is the best way to ensure I get the exact keywords!)"*
 
-```json
-{
+## Output Format (`leads/data.js`)
+You must output a Javascript file containing the jobs in this exact structure:
+
+```javascript
+window.JOBHUNTER_DATA = {
   "profile": null,
   "jobs": [
     {
@@ -124,6 +128,6 @@ You must output a JSON file containing the jobs in this exact structure:
       "addedDate": "MM/DD/YYYY"
     }
   ]
-}
+};
 ```
-*(This is a schema example, not sample data to copy — "Example Corp" and that URL are placeholders showing the shape. Every real job you write here must be one you actually found this session. Ensure `id` is unique for each job, like a numeric timestamp string. `score` is 0-100 — the dashboard bands it automatically: ≥80 HOT, 70-79 Strong, 60-69 Consider, <60 Low. Set `null` only if you genuinely haven't opened the JD yet.)*
+*(This is a schema example, not sample data to copy. Every real job you write here must be one you actually found this session. Ensure `id` is unique. `score` is 0-100. If you generated a CV for the job, include `"cvPath": "output/cvs/...docx"`. Never overwrite existing jobs if the file already exists, always parse and append.)*

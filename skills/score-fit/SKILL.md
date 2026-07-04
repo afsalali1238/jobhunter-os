@@ -44,8 +44,9 @@ Score each dimension, then sum:
    - **Strengths**: Where the user perfectly aligns with the JD.
    - **Gaps**: Requirements the user lacks or doesn't explicitly mention in their profile.
    - **Recommendation**: Whether they should apply, and what parts of their experience to highlight if they do.
-6. If this job already exists as a lead (check `leads/scraped_leads.json` or ask the user), update its `score` field to match and tell them to re-import so the dashboard badge reflects it. If it's new, offer to add it as a lead with this score.
-7. **If the user works from the Excel companion** (`excel/JobHunter_Pipeline.xlsx`) instead of
+6. Check `profile/preferences.md` for the user's auto-tailor threshold. If this job scores at or above the threshold, **automatically invoke the `tailor-cv` skill** for it.
+7. If this job already exists as a lead (check `leads/data.js` or ask the user), update its `score` field to match. If it's new, offer to add it as a lead with this score. (Remember the dashboard auto-loads `data.js` so they just need to refresh).
+8. **If the user works from the Excel companion** (`excel/JobHunter_Pipeline.xlsx`) instead of
    the HTML dashboard, also update that job's row there — run the same helper script the
    `source-jobs` skill uses, with the new score:
    ```

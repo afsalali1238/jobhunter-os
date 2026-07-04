@@ -10,31 +10,22 @@
     <link rel="stylesheet" href="style.css">
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Auto-loaded data from IDE -->
+    <script src="../leads/data.js"></script>
 </head>
 <body>
     
     <!-- Onboarding Modal -->
     <div id="onboarding-modal" class="modal-overlay hidden">
-        <div class="modal-content glass">
+        <div class="modal-content glass" style="text-align: center;">
             <h2>Welcome to JobHunter OS</h2>
-            <p>Your personal, private, and powerful job search pipeline. All data stays on your device. New here? <strong><a href="how-to-use.html" style="color:var(--accent); text-decoration:underline;">Read the Guide</a></strong> to learn how to use your AI agent.</p>
-            
-            <form id="onboarding-form">
-                <div class="form-group">
-                    <label for="user-name">What's your name?</label>
-                    <input type="text" id="user-name" placeholder="e.g. Alex" required>
-                </div>
-                <div class="form-group">
-                    <label for="target-roles">Target Job Titles</label>
-                    <input type="text" id="target-roles" placeholder="e.g. Software Engineer, Product Manager" required>
-                </div>
-                <button type="submit" class="btn-primary">Start Hunting <i class="fa-solid fa-arrow-right"></i></button>
-            </form>
-            <p style="margin-top:16px; text-align:center; font-size:0.85rem; color:var(--text-muted);">
-                Already used your AI agent to build a profile?
-                <a href="#" id="onboarding-import-link" style="color:var(--accent);">Import your leads file instead</a>
-                — it'll set your name and roles automatically.
-            </p>
+            <p>Your personal, private, and powerful job search pipeline.</p>
+            <div style="margin: 30px 0; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <p style="margin-bottom: 10px;"><strong>Ready to start?</strong></p>
+                <p>Open this folder in your AI IDE (like Cursor or Claude Code) and type:</p>
+                <code style="display: inline-block; margin-top: 10px; padding: 10px 20px; background: var(--bg); border: 1px solid var(--accent); color: var(--accent); border-radius: 4px; font-size: 1.1rem;">Let's get started</code>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Once your AI finishes building your profile, just refresh this page!</p>
         </div>
     </div>
 
@@ -48,8 +39,6 @@
             </div>
             <div class="nav-actions">
                 <a href="how-to-use.html" class="btn-secondary" style="text-decoration: none;"><i class="fa-solid fa-book"></i> Guide</a>
-                <button id="btn-export" class="btn-secondary"><i class="fa-solid fa-download"></i> Export</button>
-                <button id="btn-import" class="btn-secondary"><i class="fa-solid fa-upload"></i> Import</button>
                 <div class="user-profile">
                     <div class="avatar"><i class="fa-solid fa-user"></i></div>
                     <span id="display-name">User</span>

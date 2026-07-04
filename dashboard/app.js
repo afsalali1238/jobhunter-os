@@ -45,6 +45,26 @@ const onboardingImportLink = document.getElementById('onboarding-import-link');
 
 // --- INITIALIZATION ---
 function init() {
+    // Auto-load data from data.js
+    if (typeof window.JOBHUNTER_DATA !== 'undefined') {
+        if (window.JOBHUNTER_DATA.profile) {
+            profile = window.JOBHUNTER_DATA.profile;
+        }
+        if (window.JOBHUNTER_DATA.jobs) {
+            window.JOBHUNTER_DATA.jobs.forEach(importedJob => {
+                const existingIndex = jobs.findIndex(j => normalizeUrl(j.url) === normalizeUrl(importedJob.url));
+                if (existingIndex >= 0) {
+                    // Update non-destructive fields
+                    jobs[existingIndex].cvPath = importedJob.cvPath || jobs[existingIndex].cvPath;
+                    jobs[existingIndex].score = importedJob.score || jobs[existingIndex].score;
+                } else {
+                    jobs.push(importedJob);
+                }
+            });
+        }
+        saveData();
+    }
+
     if (!profile) {
         onboardingModal.classList.remove('hidden');
     } else {
@@ -295,7 +315,11 @@ function renderTable() {
             <td>${applyHtml}</td>
             <td>${notesHtml}</td>
             <td>
-                <button class="btn-icon" onclick="deleteJob('${job.id}')"><i class="fa-solid fa-trash"></i></button>
+                <div style="display: flex; gap: 8px;">
+                    ${job.url ? `<a href="${jobUrl}" target="_blank" class="btn-secondary" style="padding: 4px 8px; font-size: 0.8rem;" title="View Job"><i class="fa-solid fa-external-link"></i></a>` : ''}
+                    ${job.cvPath ? `<a href="../${escapeHtml(job.cvPath)}" target="_blank" class="btn-secondary" style="padding: 4px 8px; font-size: 0.8rem; color: #fff; background: var(--accent);" title="View CV"><i class="fa-solid fa-file-pdf"></i></a>` : ''}
+                    <button class="btn-icon" onclick="deleteJob('${job.id}')" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                </div>
             </td>
         `;
         tbody.appendChild(tr);
@@ -340,9 +364,11 @@ function renderKanban() {
                 ${job.interviewDate ? `<div class="interview-date"><i class="fa-regular fa-calendar-check"></i> Interview: ${escapeHtml(job.interviewDate)}</div>` : ''}
                 <div class="job-card-meta">
                     <span><i class="fa-regular fa-calendar"></i> ${escapeHtml(job.addedDate)}</span>
-                    <div class="job-actions">
-                        ${!job.applyStatus ? `<button onclick="handleApply('${job.id}')" title="Apply"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>` : ''}
-                        <button onclick="deleteJob('${job.id}')"><i class="fa-solid fa-trash"></i></button>
+                    <div class="job-actions" style="display: flex; gap: 8px;">
+                        ${job.url ? `<a href="${safeUrl(job.url)}" target="_blank" class="btn-secondary" style="padding: 4px 8px; font-size: 0.8rem;" title="View Job"><i class="fa-solid fa-external-link"></i></a>` : ''}
+                        ${job.cvPath ? `<a href="../${escapeHtml(job.cvPath)}" target="_blank" class="btn-icon" style="color: var(--accent);" title="View Tailored CV"><i class="fa-solid fa-file-pdf"></i></a>` : ''}
+                        ${!job.applyStatus ? `<button onclick="handleApply('${job.id}')" class="btn-secondary" style="padding: 4px 8px; font-size: 0.8rem;" title="Apply"><i class="fa-solid fa-paper-plane"></i></button>` : ''}
+                        <button onclick="deleteJob('${job.id}')" class="btn-secondary" style="padding: 4px 8px; font-size: 0.8rem;" title="Delete"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             `;
