@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobHunter OS - How to Use</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .guide-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .guide-container h1 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        .guide-container h2 {
+            margin-top: 40px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+        .guide-container p, .guide-container li {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: var(--text-dim);
+        }
+        .guide-container ul {
+            padding-left: 20px;
+        }
+        .command-box {
+            background: var(--bg);
+            padding: 15px;
+            border-left: 4px solid var(--accent);
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 15px 0;
+            color: var(--text);
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+        }
+        .back-btn:hover {
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="guide-container glass">
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+        
+        <h1>How to Use JobHunter OS</h1>
+        <p>Welcome to JobHunter OS. This isn't a normal web app—it's a system powered by your local AI code editor (like Cursor, Claude Code, or Antigravity). You don't click buttons to find jobs; you <strong>talk to your AI</strong>.</p>
+
+        <h2>Step 1: The Initial Setup</h2>
+        <p>To get started, open this entire project folder in your AI IDE, open the chat panel, and type:</p>
+        <div class="command-box">Let's get started</div>
+        <p>Your AI will guide you through building your profile. It will ask for your real CV, LinkedIn profile, or other materials, and it will save this data locally in the <code>profile/</code> folder. <strong>All data stays on your machine.</strong></p>
+
+        <h2>Step 2: Finding and Scoring Jobs</h2>
+        <p>Once your profile is set up, you can ask the AI to find jobs for you. Try typing:</p>
+        <div class="command-box">Find me jobs</div>
+        <p>The AI will search the web for real job postings in your target region, read the actual job descriptions, and score your fit (from 0 to 100) based on your real experience.</p>
+        <p>If you found a job yourself and want the AI to analyze it, paste the link and say:</p>
+        <div class="command-box">Score this job: [Link]</div>
+
+        <h2>Step 3: Managing Your Pipeline</h2>
+        <p>The AI saves all the jobs it finds into a file called <code>leads/scraped_leads.json</code>.</p>
+        <ul>
+            <li><strong>Dashboard:</strong> Open <code>dashboard/index.html</code> (this page) and click <strong>Import</strong>. Select the <code>scraped_leads.json</code> file to see all your jobs visually in a Kanban board.</li>
+            <li><strong>Excel:</strong> If you prefer spreadsheets, the AI automatically syncs new leads to <code>excel/JobHunter_Pipeline.xlsx</code>.</li>
+        </ul>
+
+        <h2>Step 4: Tailoring Your CV & Outreach</h2>
+        <p>When you are ready to apply for a job that's in your pipeline, ask the AI to help you apply:</p>
+        <div class="command-box">Tailor my CV for [Company Name]</div>
+        <p>The AI will rewrite your CV to highlight the experience most relevant to that specific job description, without ever inventing fake experience. It will output a genuinely ATS-safe Word document (<code>.docx</code>) into the <code>output/cvs/</code> folder.</p>
+        <p>You can also ask for outreach materials:</p>
+        <div class="command-box">Write outreach for [Company Name]</div>
+        <p>The AI will draft a highly tailored cover letter and LinkedIn direct messages for the hiring manager.</p>
+
+        <h2>Summary of Commands</h2>
+        <p>You can talk to the AI naturally, but here are the core commands it understands best:</p>
+        <ul>
+            <li><code>Let's get started</code> - Run the initial profile setup.</li>
+            <li><code>Find me jobs</code> - Search the web for new leads.</li>
+            <li><code>Score this job [link/text]</code> - Evaluate a specific job description.</li>
+            <li><code>Tailor my CV for [Company]</code> - Generate an ATS-compliant Word document tailored to the role.</li>
+            <li><code>Write outreach for [Company]</code> - Draft a cover letter and DMs.</li>
+        </ul>
+    </div>
+</body>
+</html>
