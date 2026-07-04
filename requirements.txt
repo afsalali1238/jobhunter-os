@@ -1,0 +1,4 @@
+# Only needed for the optional scripts/generate_outreach.py helper.
+# The core JobHunter OS workflow (dashboard + skills) needs no dependencies —
+# your AI IDE (Cursor / Claude / Antigravity) is the engine.
+google-genai

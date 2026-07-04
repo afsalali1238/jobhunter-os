@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobHunter OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    
+    <!-- Onboarding Modal -->
+    <div id="onboarding-modal" class="modal-overlay hidden">
+        <div class="modal-content glass">
+            <h2>Welcome to JobHunter OS</h2>
+            <p>Your personal, private, and powerful job search pipeline. Let's get you set up. All data stays on your device.</p>
+            
+            <form id="onboarding-form">
+                <div class="form-group">
+                    <label for="user-name">What's your name?</label>
+                    <input type="text" id="user-name" placeholder="e.g. Alex" required>
+                </div>
+                <div class="form-group">
+                    <label for="target-roles">Target Job Titles</label>
+                    <input type="text" id="target-roles" placeholder="e.g. Software Engineer, Product Manager" required>
+                </div>
+                <button type="submit" class="btn-primary">Start Hunting <i class="fa-solid fa-arrow-right"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="app-container" class="hidden">
+        <!-- Sidebar / Top Nav -->
+        <header class="top-nav glass">
+            <div class="logo">
+                <i class="fa-solid fa-crosshairs icon-accent"></i>
+                <span>JobHunter OS</span>
+            </div>
+            <div class="nav-actions">
+                <button id="btn-export" class="btn-secondary"><i class="fa-solid fa-download"></i> Export</button>
+                <button id="btn-import" class="btn-secondary"><i class="fa-solid fa-upload"></i> Import</button>
+                <div class="user-profile">
+                    <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                    <span id="display-name">User</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+            <div class="header-section">
+                <div>
+                    <h1 id="greeting">Hello!</h1>
+                    <p class="tagline">Targeting: <span id="display-roles" class="badge">Roles</span></p>
+                </div>
+                <button id="btn-add-job" class="btn-primary"><i class="fa-solid fa-plus"></i> Add Job</button>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi glass kpi-total">
+                    <div class="kpi-label">Total Pipeline</div>
+                    <div class="kpi-value" id="kpi-total">0</div>
+                </div>
+                <div class="kpi glass kpi-applied">
+                    <div class="kpi-label">Applied</div>
+                    <div class="kpi-value" id="kpi-applied">0</div>
+                </div>
+                <div class="kpi glass kpi-interviewing">
+                    <div class="kpi-label">Interviewing</div>
+                    <div class="kpi-value" id="kpi-interviewing">0</div>
+                </div>
+                <div class="kpi glass kpi-offers">
+                    <div class="kpi-label">Offers</div>
+                    <div class="kpi-value" id="kpi-offers">0</div>
+                </div>
+            </div>
+
+            <!-- View Toggles -->
+            <div class="view-controls">
+                <div class="view-toggle glass">
+                    <button id="toggle-kanban" class="active"><i class="fa-solid fa-border-all"></i> Board</button>
+                    <button id="toggle-table"><i class="fa-solid fa-list"></i> Table</button>
+                </div>
+            </div>
+
+            <!-- Kanban Board View -->
+            <div id="view-kanban" class="kanban-board">
+                <!-- Columns injected by JS -->
+            </div>
+
+            <!-- Table View -->
+            <div id="view-table" class="table-view hidden glass">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Added Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Rows injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Add Job Modal -->
+    <div id="add-job-modal" class="modal-overlay hidden">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h2>Add New Opportunity</h2>
+                <button id="close-add-job" class="btn-icon"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="add-job-form">
+                <div class="form-group">
+                    <label for="job-company">Company Name</label>
+                    <input type="text" id="job-company" required>
+                </div>
+                <div class="form-group">
+                    <label for="job-title">Job Title</label>
+                    <input type="text" id="job-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="job-url">Job Link / URL</label>
+                    <input type="url" id="job-url" placeholder="https://..." required>
+                </div>
+                <div class="form-group">
+                    <label for="job-status">Status</label>
+                    <select id="job-status">
+                        <option value="Scouted">Scouted</option>
+                        <option value="CV Ready">CV Ready</option>
+                        <option value="Applied">Applied</option>
+                        <option value="Interviewing">Interviewing</option>
+                        <option value="Offer">Offer</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary w-100">Save Job</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Apply Dialog Modal -->
+    <div id="apply-dialog" class="modal-overlay hidden">
+        <div class="modal-content glass" style="text-align: center; max-width: 400px;">
+            <h2 style="margin-bottom: 15px;">Application Status</h2>
+            <p>You just opened the application for <strong id="dialog-company"></strong>.<br>Did it submit successfully?</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button id="btn-apply-success" class="btn-primary" style="background: var(--status-offer); box-shadow: none;">✅ Yes, Applied</button>
+                <button id="btn-apply-manual" class="btn-primary" style="background: var(--status-applied); box-shadow: none;">⚠️ Error / Manual</button>
+                <button id="btn-apply-cancel" class="btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="import-file" accept=".json" style="display:none;">
+
+    <!-- SortableJS for Drag and Drop -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

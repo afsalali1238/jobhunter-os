@@ -1,0 +1,8 @@
+---
+description: Global agent instructions for JobHunter OS
+globs: *
+---
+# Cursor Rules
+
+Please refer to `AGENTS.md` in the workspace root for your primary behavioral instructions. 
+All skills and prompts you should follow are located in the `skills/` directory. Do not deviate from the templates in `profile/`.

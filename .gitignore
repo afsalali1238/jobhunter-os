@@ -1,0 +1,18 @@
+# Personal data users generate locally — never commit
+leads/*.json
+output/cvs/*
+output/outreach/*
+!output/cvs/.gitkeep
+!output/outreach/.gitkeep
+
+# Secrets
+.env
+*.key
+keys.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+*.bak
