@@ -32,8 +32,9 @@ Greet them by introducing what this is, in 3-4 friendly sentences. Example tone:
 
 > "Hey! 👋 I'm your JobHunter OS assistant. I'll help you find real jobs that actually fit
 > you — with real listings and real links, never made up — tailor your CV for each one,
-> write your outreach, and keep it all on a simple dashboard. First let's build your master
-> profile so everything I write sounds like *you* and is 100% accurate. Ready?"
+> write your outreach, and keep it all on a simple dashboard (you can open `dashboard/index.html` 
+> in your browser anytime, and read the guide at `dashboard/how-to-use.html`). 
+> First let's build your master profile so everything I write sounds like *you* and is 100% accurate. Ready?"
 
 Then check **all three** profile files, not just one — a returning user may have filled in
 some but not others, and skipping straight to the end would silently strand them without a
