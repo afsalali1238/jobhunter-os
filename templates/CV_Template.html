@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CV Template</title>
+<!--
+  JOBHUNTER OS — CV TEMPLATE
+  ==========================
+  This is the base template the `tailor-cv` skill fills in for every application.
+  It is deliberately plain: single column, no tables, no images, no text boxes,
+  standard fonts, exact section headings — the same rules that keep a real
+  .docx ATS-safe apply here too, because this file gets printed straight to PDF.
+
+  HOW THE AGENT USES THIS FILE:
+  1. Copy this file to output/cvs/[Company]_[Role]_CV.html
+  2. Replace every {{PLACEHOLDER}} with real content from profile/experience-bank.md —
+     never invent anything that isn't genuinely in the user's profile.
+  3. Duplicate the <section class="job"> block for each role (reverse-chronological,
+     most recent first). Delete unused placeholder blocks.
+  4. Keep everything to 1-2 pages. If it overflows, trim the lowest-relevance bullet
+     first (see skills/tailor-cv/SKILL.md — relevance-weighted trimming), not just
+     the oldest one.
+  5. The "Projects" section is optional — only keep it if "Wins & Proof" in
+     experience-bank.md has something real that doesn't already fit under a role above.
+     Delete it otherwise; don't pad the CV to fill space.
+  6. Run: python3 scripts/convert_html_cvs.py output/cvs/[Company]_[Role]_CV.html
+     This prints the file to PDF via headless Chrome and reports the page count.
+-->
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+
+  * { box-sizing: border-box; }
+
+  body {
+    /* Standard, ATS-recognized font only. */
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.4;
+    color: #1a1a1a;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 24px;
+    background: #fff;
+  }
+
+  /* Single-column layout throughout — no side-by-side columns, no floats used
+     for structure. Everything reads top-to-bottom in document order. */
+
+  header.cv-header {
+    margin-bottom: 14px;
+  }
+
+  h1.name {
+    font-size: 15pt;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+  }
+
+  p.contact-line {
+    margin: 0 0 2px 0;
+    font-size: 10pt;
+  }
+
+  p.headline {
+    margin: 4px 0 0 0;
+    font-size: 10.5pt;
+    font-weight: 600;
+  }
+
+  /* Exact, standard section headings — ATS parsers pattern-match on these words. */
+  h2.section-heading {
+    font-size: 11pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid #999;
+    padding-bottom: 2px;
+    margin: 14px 0 6px 0;
+  }
+
+  p.summary-text {
+    margin: 0 0 4px 0;
+  }
+
+  section.job {
+    margin-bottom: 10px;
+  }
+
+  /* Plain block-level lines, not flex/space-between — some older visual-based ATS PDF
+     parsers (older Greenhouse/Taleo versions) can smash or misorder text that was
+     laid out with large flex gaps. A single line with an inline separator reads
+     correctly top-to-bottom-left-to-right no matter how the parser extracts it. */
+  .job-title-line {
+    font-weight: 700;
+    font-size: 10.5pt;
+  }
+
+  .job-meta-line {
+    font-style: italic;
+    font-size: 10pt;
+    margin-bottom: 3px;
+  }
+
+  ul.bullets {
+    margin: 0;
+    padding-left: 16px;
+  }
+
+  ul.bullets li {
+    margin-bottom: 2px;
+  }
+
+  p.skills-line, p.education-line, p.cert-line {
+    margin: 0 0 4px 0;
+  }
+
+  /* Print-specific: avoid splitting a job entry across a page break where possible. */
+  @media print {
+    section.job { break-inside: avoid; }
+    body { padding: 0; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="cv-header">
+    <h1 class="name">{{FULL_NAME}}</h1>
+    <p class="contact-line">{{EMAIL}} | {{PHONE}} | {{LOCATION}} | {{LINKEDIN_URL}}</p>
+    <p class="headline">{{HEADLINE — e.g. Operations Manager | Business Development | Project Delivery}}</p>
+  </header>
+
+  <h2 class="section-heading">Summary</h2>
+  <p class="summary-text">{{2-3 sentence summary tailored to the target JD, built only from real experience.}}</p>
+
+  <h2 class="section-heading">Experience</h2>
+
+  <!-- Duplicate this <section class="job"> block once per role. Most recent first. -->
+  <section class="job">
+    <div class="job-title-line">{{JOB_TITLE}} — {{Mon YYYY – Mon YYYY}}</div>
+    <div class="job-meta-line">{{COMPANY_NAME}} — {{LOCATION}}</div>
+    <ul class="bullets">
+      <li>{{Bullet 1 — real, quantified where possible, mirroring JD keywords the user actually has.}}</li>
+      <li>{{Bullet 2}}</li>
+      <li>{{Bullet 3}}</li>
+    </ul>
+  </section>
+
+  <section class="job">
+    <div class="job-title-line">{{JOB_TITLE}} — {{Mon YYYY – Mon YYYY}}</div>
+    <div class="job-meta-line">{{COMPANY_NAME}} — {{LOCATION}}</div>
+    <ul class="bullets">
+      <li>{{Bullet 1}}</li>
+      <li>{{Bullet 2}}</li>
+    </ul>
+  </section>
+
+  <!-- OPTIONAL: only include this section if profile/experience-bank.md's "Wins & Proof"
+       has something that doesn't already fit naturally under a role above (a side project,
+       an award, a personal build). Delete this whole block if there's nothing worth a
+       separate section — don't pad the CV with a thin one just to fill space. -->
+  <h2 class="section-heading">Projects</h2>
+  <section class="job">
+    <div class="job-title-line">{{PROJECT_NAME}} — {{Mon YYYY, or ongoing}}</div>
+    <ul class="bullets">
+      <li>{{What it is and the real, quantified outcome — from "Wins & Proof" in experience-bank.md.}}</li>
+    </ul>
+  </section>
+
+  <h2 class="section-heading">Skills</h2>
+  <p class="skills-line">{{Comma-separated list — plain text, never a graphic skill bar or table.}}</p>
+
+  <h2 class="section-heading">Education</h2>
+  <p class="education-line">{{DEGREE}}, {{INSTITUTION}} — {{YEAR}}</p>
+
+  <h2 class="section-heading">Certifications</h2>
+  <p class="cert-line">{{Certification name}} — {{Issuer, Year}}</p>
+
+</body>
+</html>

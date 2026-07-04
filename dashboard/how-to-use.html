@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="../leads/data.js"></script>
     <style>
         .guide-container {
             max-width: 800px;
@@ -79,19 +80,23 @@
         <div class="command-box">Score this job: [Link]</div>
 
         <h2>Step 3: Managing Your Pipeline</h2>
-        <p>The AI saves all the jobs it finds into a file called <code>leads/scraped_leads.json</code>.</p>
+        <p>The AI saves all the jobs it finds into a file called <code>leads/data.js</code>.</p>
         <ul>
-            <li><strong>Dashboard:</strong> Open <code>dashboard/index.html</code> (this page) and click <strong>Import</strong>. Select the <code>scraped_leads.json</code> file to see all your jobs visually in a Kanban board.</li>
+            <li><strong>Dashboard:</strong> Just open <code>dashboard/index.html</code> (or refresh it) — it loads <code>leads/data.js</code> automatically, no import step needed.</li>
             <li><strong>Excel:</strong> If you prefer spreadsheets, the AI automatically syncs new leads to <code>excel/JobHunter_Pipeline.xlsx</code>.</li>
         </ul>
 
         <h2>Step 4: Tailoring Your CV & Outreach</h2>
         <p>When you are ready to apply for a job that's in your pipeline, ask the AI to help you apply:</p>
         <div class="command-box">Tailor my CV for [Company Name]</div>
-        <p>The AI will rewrite your CV to highlight the experience most relevant to that specific job description, without ever inventing fake experience. It will output a genuinely ATS-safe Word document (<code>.docx</code>) into the <code>output/cvs/</code> folder.</p>
+        <p>The AI will rewrite your CV to highlight the experience most relevant to that specific job description, without ever inventing fake experience. It will output a genuinely ATS-safe PDF into the <code>output/cvs/</code> folder.</p>
         <p>You can also ask for outreach materials:</p>
         <div class="command-box">Write outreach for [Company Name]</div>
         <p>The AI will draft a highly tailored cover letter and LinkedIn direct messages for the hiring manager.</p>
+
+        <h2>Backing Up Your Data</h2>
+        <p>Everything lives in one file: <code>leads/data.js</code>. Since it's just a file in your project folder, you can back it up any time by copying it — or use the button below to download a dated snapshot.</p>
+        <button id="btn-backup" class="btn-primary" style="border:none; cursor:pointer;"><i class="fa-solid fa-download"></i> Download a backup</button>
 
         <h2>Summary of Commands</h2>
         <p>You can talk to the AI naturally, but here are the core commands it understands best:</p>
@@ -99,9 +104,30 @@
             <li><code>Let's get started</code> - Run the initial profile setup.</li>
             <li><code>Find me jobs</code> - Search the web for new leads.</li>
             <li><code>Score this job [link/text]</code> - Evaluate a specific job description.</li>
-            <li><code>Tailor my CV for [Company]</code> - Generate an ATS-compliant Word document tailored to the role.</li>
+            <li><code>Tailor my CV for [Company]</code> - Generate an ATS-compliant PDF tailored to the role.</li>
             <li><code>Write outreach for [Company]</code> - Draft a cover letter and DMs.</li>
         </ul>
     </div>
+    <script>
+        var backupBtn = document.getElementById('btn-backup');
+        if (backupBtn) {
+            backupBtn.addEventListener('click', function () {
+                if (typeof window.JOBHUNTER_DATA === 'undefined') {
+                    alert("No data found yet — leads/data.js hasn't been created by your AI agent yet.");
+                    return;
+                }
+                var blob = new Blob([JSON.stringify(window.JOBHUNTER_DATA, null, 2)], { type: 'application/json' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                var date = new Date().toISOString().slice(0, 10);
+                a.href = url;
+                a.download = 'jobhunter-backup-' + date + '.json';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+            });
+        }
+    </script>
 </body>
 </html>

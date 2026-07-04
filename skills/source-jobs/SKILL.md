@@ -1,6 +1,6 @@
 ---
 name: source-jobs
-description: Use real web search / browser tools to find ACTUAL live job postings — with real, working links — matching the user's target-roles, and save them to leads/scraped_leads.json. Never fabricates listings.
+description: Use real web search / browser tools to find ACTUAL live job postings — with real, working links — matching the user's target-roles, and save them to leads/data.js. Never fabricates listings.
 ---
 # Source Jobs
 
@@ -72,10 +72,10 @@ inventing a number, and tell the user exactly which ones still need a real read.
 
 ### 6. Build the output
 Collect `company`, `title`, the real `url`, and the real `score` (or `null`) for each posting
-into the JSON payload below, and save it to `leads/scraped_leads.json`.
+into the payload below, and save it to `leads/data.js`.
 
-**Deduplication:** Before writing the final JSON, check if `leads/scraped_leads.json` already
-exists. If it does, read it and compare URLs — do not include any posting whose URL already
+**Deduplication:** Before writing the file, check if `leads/data.js` already
+exists. If it does, read it (strip the `window.JOBHUNTER_DATA = ` prefix to parse the JSON) and compare URLs — do not include any posting whose URL already
 appears in the existing file. Append only genuinely new leads to the existing list. Mention to
 the user how many were new vs. already tracked (e.g. *"Found 12 postings — 9 are new, 3 were
 already in your tracker."*).
@@ -130,4 +130,4 @@ window.JOBHUNTER_DATA = {
   ]
 };
 ```
-*(This is a schema example, not sample data to copy. Every real job you write here must be one you actually found this session. Ensure `id` is unique. `score` is 0-100. If you generated a CV for the job, include `"cvPath": "output/cvs/...docx"`. Never overwrite existing jobs if the file already exists, always parse and append.)*
+*(This is a schema example, not sample data to copy. Every real job you write here must be one you actually found this session. Ensure `id` is unique. `score` is 0-100. If you generated a CV for the job, include `"cvPath": "output/cvs/...pdf"`. Never overwrite existing jobs if the file already exists, always parse and append.)*

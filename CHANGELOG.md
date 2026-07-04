@@ -78,3 +78,83 @@ sounded right in the docs but didn't have real mechanics behind them yet:
 - **Corrected the README/START-HERE multi-IDE claim** — it previously said Cursor and
   Antigravity "work perfectly" alongside Claude, which overstated Antigravity's (unverified,
   pointer-file-only) support. Now states support tiers honestly.
+
+## v1.3 — 2026-07-05 (CV pipeline consolidation + PII cleanup)
+
+Reviewed against three popular reference job-search repos; borrowed the ideas that fit a
+files-only, no-backend system and skipped the ones that didn't (a local server/DB, a Go TUI,
+a full vector-DB stack). Also found and removed real personal data that had been committed to
+this public template repo.
+
+- **One canonical CV pipeline, not two.** Removed `scripts/build_ats_docx.py` and the
+  python-docx path entirely. `tailor-cv` now always uses `templates/CV_Template.html` +
+  `scripts/convert_html_cvs.py` (headless Chrome print-to-PDF). Fewer moving parts, easier to
+  reason about, matches the "limit features" direction.
+- **`convert_html_cvs.py` rewritten from scratch** — it was hardcoded to scan its own script
+  directory for files named `"CV — Afsal Ali ("`, which only worked for one person on one
+  machine. Now accepts explicit file paths or `--dir`, defaults to `output/cvs/`, and detects
+  Chrome/Chromium across Windows, macOS, and Linux instead of three Windows-only paths.
+- **Added PDF layout verification.** The converter now reports the generated PDF's page count
+  (via `pypdf`, with a graceful skip if it isn't installed) and flags anything over 2 pages
+  instead of silently handing over an overflowing CV.
+- **Added relevance-weighted trimming** to `tailor-cv`: when a CV overflows 2 pages, cut the
+  lowest-relevance/least-unique bullet first (scored on JD-keyword relevance, uniqueness vs.
+  other bullets, and recency) instead of just deleting the oldest role wholesale.
+- **Removed the dead Export/Import code** from `dashboard/app.js` and `dashboard/index.html`
+  — it had been superseded by the `leads/data.js` auto-load architecture and was only kept
+  around (guarded) to stop a crash. Replaced with a single "Download a backup" button on
+  `dashboard/how-to-use.html` that snapshots `window.JOBHUNTER_DATA` to a dated JSON file.
+- **Removed real personal data from the repo.** `templates/CV_Template_Operations.html` and
+  `templates/CV_Template_Category.html` had been created with real name, contact details, real
+  employers, and sensitive personal details (nationality, DOB, visa status) instead of
+  placeholders — deleted (they were untracked, so no git history exposure) and replaced with
+  a single generic `templates/CV_Template.html` using `{{PLACEHOLDER}}` markers throughout.
+- **Fixed stale `leads/scraped_leads.json` references** left over from the `leads/data.js`
+  migration in `AGENTS.md`, `skills/source-jobs/SKILL.md`, and several `.claude/skills/` and
+  `.cursor/rules/` mirrors that had drifted out of sync with the canonical `skills/` versions
+  — resynced all mirrors from `skills/` as the source of truth.
+- **Known issue, not fixed by this pass:** an earlier commit (since removed from this branch's
+  history) contained a real name and real job-lead data with personal notes. That commit is no
+  longer reachable from `main`, but GitHub can still serve orphaned commits directly by SHA for
+  a period after a rewrite/reset. If this repo is public, treat that commit as still exposed
+  until the repository is made private, recreated fresh, or GitHub support purges cached views.
+
+## v1.4 — 2026-07-05 (genuine Antigravity native support)
+
+Checked Antigravity's official docs (antigravity.google/docs/skills, /docs/rules-workflows)
+rather than assuming — the repo's previous "Antigravity reads AGENTS.md and skills/ directly"
+claim was an assumption, not something Antigravity's docs confirm. Antigravity actually has its
+own native skill-discovery and rules system, and this repo wasn't using either.
+
+- **Added real `.agents/skills/<name>/SKILL.md` for all 5 skills.** Antigravity's skills use
+  the exact same open standard as Claude Code (YAML frontmatter: `name` optional, `description`
+  required) — so these are byte-for-byte copies of `.claude/skills/`, no adaptation needed.
+  Without this, Antigravity had no way to see the 5 skills as a discoverable list; it would
+  only find them if a user manually said "read AGENTS.md and follow skills/" every session.
+- **Added `.agents/rules/jobhunter.md`** — Antigravity's native workspace-rules location,
+  carrying the same real-data-only rules and fit-score bands as `AGENTS.md`. Needs a one-time
+  manual step (Customizations panel → Rules → set to Always On) since rule activation is a
+  UI setting, not something a file alone can configure.
+- **Removed `.agents/skills.json`** — a hand-rolled pointer file (`{"entries": [{"path":
+  "../skills"}]}`) that was never a real Antigravity convention; Antigravity's docs don't
+  recognize it. Superseded by the real `.agents/skills/` folder above.
+- **`scripts/self_check.py` now also checks `.agents/skills/` for drift** against `skills/`,
+  alongside the existing `.claude/skills/` and `.cursor/rules/` checks.
+- **Corrected README/START-HERE's Antigravity claims** to describe the real mechanism instead
+  of the assumed one.
+
+## v1.5 — 2026-07-05 (two real bugs, caught by user review)
+
+- **Fixed: Kanban card lost its Apply button on a "Manual Apply Required" state.**
+  `renderTable()` correctly showed a Retry button in that state; `renderKanban()`'s card only
+  checked `!job.applyStatus`, so once a job needed manual apply, the button vanished from the
+  board entirely — the only way to retry was switching to Table view. Kanban now mirrors the
+  same three states (none / Applied* / Manual*), showing a Retry button and a small status
+  note on the card when manual apply is needed.
+- **Fixed: `templates/CV_Template.html` used `display:flex; justify-content:space-between`**
+  for the job title/dates and company/location lines. That renders beautifully on screen and
+  in a browser-perfect PDF, but some older visual-based ATS parsers (older Greenhouse/Taleo)
+  can smash or misorder text separated by a large flex-driven gap when extracting from the
+  PDF's content stream. Replaced with a single inline line per row (`{{JOB_TITLE}} —
+  {{DATES}}`), which reads correctly regardless of how a parser walks the page. Applied to the
+  Experience rows and the Projects section, which used the same pattern.

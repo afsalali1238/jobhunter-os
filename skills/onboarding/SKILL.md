@@ -129,8 +129,9 @@ Congratulate them. Then teach them the few phrases they'll actually use, e.g.:
 > • **Find me jobs** — I'll search [their boards] for real, live openings — real links,
 >   never made up — and score them against your actual background.
 > • **Tailor my CV for [company]** — a custom CV built only from what's really in your profile.
-> • **Write outreach for [company]** — cover letter + LinkedIn messages.
-> • To see your pipeline, open **dashboard/index.html** (double-click it).
+> • To see your pipeline, open the **dashboard** folder in this project and double-click **index.html**.
+> • Your background and preferences are saved in the **profile** folder.
+> • Your generated CVs and cover letters are saved in the **output/cvs** and **output/outreach** folders.
 >
 > Want me to find your first batch of jobs right now?"
 

@@ -81,8 +81,9 @@ support for auto-discovering the skills just varies by tool:
 
 - **Claude (Cowork):** Connect this folder, then type `Let's get started`. *Even simpler — no code editor, just chat.* Skills auto-load via `.claude/skills/`.
 - **Cursor:** Skills auto-load via `.cursor/rules/`.
-- **Antigravity or anything else:** Open the folder and type `Let's get started` — it reads `AGENTS.md` directly. If it doesn't pick the skills up on its own, just say "read AGENTS.md and follow the skills in `skills/`" once at the start.
+- **Antigravity:** Skills auto-load via `.agents/skills/` — same idea, the agent sees all 5 skills at the start of every chat and picks the right one. One-time setup: open the Customizations panel → Rules, find `.agents/rules/jobhunter.md`, and set it to **Always On**.
+- **Anything else:** Open the folder and type `Let's get started` — it reads `AGENTS.md` directly. If it doesn't pick the skills up on its own, just say "read AGENTS.md and follow the skills in `skills/`" once at the start.
 
-All of them follow the same underlying instructions (`AGENTS.md` + `skills/`), so the
-experience should feel the same either way — Claude and Cursor just get there automatically.
+All of them follow the same underlying instructions, so the experience should feel the same
+either way — Claude, Cursor, and Antigravity all get there automatically once set up.
 See `README.md` for a flowchart of how all the pieces connect, or double-click `dashboard/index.html` to see the UI.

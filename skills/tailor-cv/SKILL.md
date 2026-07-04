@@ -1,6 +1,6 @@
 ---
 name: tailor-cv
-description: Rewrite the user's CV to highlight the specific experiences and keywords relevant to a target job description, and produce it as a genuinely ATS-safe .docx (not just a nicely formatted document — one that actually parses cleanly in applicant tracking systems).
+description: Rewrite the user's CV to highlight the specific experiences and keywords relevant to a target job description, and produce it as a genuinely ATS-safe PDF (not just a nicely formatted document — one that actually parses cleanly in applicant tracking systems).
 ---
 # Tailor CV
 
@@ -17,7 +17,7 @@ When the user asks you to "tailor my CV for [Company/Role]", "write a CV for thi
    like the blank template or is clearly thin, stop and tell the user their profile needs to
    be filled in properly first — don't tailor from an empty or near-empty base.
 2. Get the real JD — open the actual link, or use the text the user pasted/the job noted in
-   `leads/scraped_leads.json`. Analyze it to find key terminology, required skills, and core responsibilities.
+   `leads/data.js`. Analyze it to find key terminology, required skills, and core responsibilities.
 3. Rewrite the headline, summary, and bullet points to emphasize experience that overlaps with the JD.
    - **CRITICAL RULE**: Do NOT fabricate experience, dates, tools, or metrics. If they don't have it, don't write it. Only reframe what is already there.
    - If the JD needs something genuinely missing from the profile, leave it out and mention
@@ -29,37 +29,48 @@ When the user asks you to "tailor my CV for [Company/Role]", "write a CV for thi
      you used is genuinely backed by the profile before including it.
 4. Save the working copy as clean Markdown to `output/cvs/[Company]_[Role]_CV.md` — this is
    your editable draft and what you show the user first for feedback.
-5. Once the user is happy with the content, produce the **submission-ready `.docx`** — this is
+5. Once the user is happy with the content, produce the **submission-ready PDF** — this is
    the file they should actually upload to applications, and it needs to be genuinely ATS-safe,
    not just nicely formatted.
-   - **Use the bundled script, don't hand-roll python-docx layout code.** Write a small JSON
-     file matching the schema documented at the top of `scripts/build_ats_docx.py` (name,
-     contact line, headline, summary, experience with bullets, skills, education,
-     certifications — all pulled only from what you already wrote in step 3/4, nothing new),
-     then run:
+   - **Copy the template, don't hand-roll a layout.** Copy `templates/CV_Template.html` to
+     `output/cvs/[Company]_[Role]_CV.html`, then replace every `{{PLACEHOLDER}}` with the
+     content you wrote in step 3/4 — nothing new, nothing invented. Duplicate the
+     `<section class="job">` block once per role (reverse-chronological, most recent first)
+     and delete unused ones. The template already enforces every ATS rule below (single
+     column, standard fonts, exact section headings, no tables/graphics) — don't restructure it.
+     The template's "Projects" section is optional — only keep it if `experience-bank.md`'s
+     "Wins & Proof" has something real that doesn't already fit under a role above (a side
+     project, an award); delete the section otherwise rather than padding the CV.
+   - Convert to PDF:
      ```
-     python3 scripts/build_ats_docx.py --input <tmp_cv_data.json> --output output/cvs/[Company]_[Role]_CV.docx --pdf
+     python3 scripts/convert_html_cvs.py output/cvs/[Company]_[Role]_CV.html
      ```
-     The script always emits single-column layout, standard fonts/headings, and no
-     tables/graphics/headers-footers — the ATS rules below are enforced by the script itself,
-     not left to chance. Requires `pip install python-docx --break-system-packages` if not
-     already available in this environment; if you have a dedicated `docx` skill/tool in your
-     IDE instead, you can use that as an alternative — the ATS rules still apply.
-   - If neither python-docx nor a docx tool is available, tell the user plainly and fall back
-     to offering the Markdown file plus a print-ready HTML version (see step 7) rather than
-     silently skipping the docx.
-6. Present the file(s) to the user, confirm the `.pdf` and `.docx` are what they should actually upload to
+     This uses headless Chrome to print the file and reports the resulting page count.
+     Requires Chrome/Chromium installed locally (most machines already have it). If it can't
+     find Chrome, tell the user plainly and offer the HTML file for them to open and
+     "Print > Save as PDF" manually instead of silently failing.
+   - **PDF layout verification**: Read the page-count line the script prints.
+     - **1-2 pages** → good, proceed to step 6.
+     - **3+ pages** → do NOT hand this to the user yet. Go to the **relevance-weighted
+       trimming** step below, cut content, and re-run the conversion. Repeat until it's
+       1-2 pages.
+6. **If it overflows 2 pages — relevance-weighted trimming.** Don't just delete the oldest
+   role or the last bullet. Score every bullet across the whole CV on:
+   - **Relevance** — does it use JD keywords / match a JD requirement?
+   - **Uniqueness** — does it show something no other bullet already covers?
+   - **Recency** — more recent roles get a small preference over older ones, all else equal.
+   Cut the lowest-scoring bullet first, re-check the page count, and repeat one bullet at a
+   time rather than deleting a whole section in one pass — you want the smallest cut that
+   gets back to 2 pages, not the fastest one.
+7. Present the file(s) to the user, confirm the `.pdf` is what they should actually upload to
    job applications, and ask if they'd like any revisions. If you had to skip anything the JD
-   asked for, say so explicitly here.
-7. **Update the dashboard**: Open `leads/data.js` and find the job you just tailored the CV for. Update its `"cvPath"` property to point to the newly generated PDF (e.g., `"cvPath": "output/cvs/[Company]_[Role]_CV.pdf"`). This enables the "View CV" button on the dashboard.
-8. Optionally, also offer a clean, print-ready HTML version (inline CSS, no external
-   dependencies) saved as `output/cvs/[Company]_[Role]_CV.html` for browser preview or
-   printing to PDF — a nice-to-have alongside the `.docx`, not a replacement for it, since a
-   browser "print to PDF" is not guaranteed to parse as cleanly in an ATS as a real `.docx`.
-## ATS-safe formatting rules (what `scripts/build_ats_docx.py` enforces)
+   asked for, or trim anything to fit 2 pages, say so explicitly here.
+8. **Update the dashboard**: Open `leads/data.js` and find the job you just tailored the CV for. Update its `"cvPath"` property to point to the newly generated PDF (e.g., `"cvPath": "output/cvs/[Company]_[Role]_CV.pdf"`). This enables the "View CV" button on the dashboard.
+
+## ATS-safe formatting rules (what `templates/CV_Template.html` enforces)
 A CV that *looks* professional but confuses an ATS parser is worse than a plain one — the
-recruiter never sees it. These are already built into the script; if you ever generate the
-`.docx` a different way (a docx skill/tool, or by hand), apply every rule below yourself:
+recruiter never sees it. These are already built into the template; if you ever build the
+HTML a different way, apply every rule below yourself:
 
 - **Single column, linear layout.** No multi-column sections, no side-bar for skills/contact,
   no tables used for layout (a real table for e.g. a skills matrix will scramble reading
@@ -72,16 +83,21 @@ recruiter never sees it. These are already built into the script; if you ever ge
 - **Standard, exact section headings** — use these words, not creative variants: `Summary`,
   `Experience`, `Skills`, `Education`, `Certifications`. ATS systems pattern-match on common
   headings; "My Journey" or "What I Bring" won't be recognized.
-- **Standard fonts only** — Calibri, Arial, or Times New Roman. Body text 10.5-11pt, name
-  14-16pt. No script/decorative fonts.
-- **Consistent bullet character** (a plain `-`) throughout, never mixed.
+- **Standard fonts only** — Arial, Helvetica, or Times New Roman. Body text 10.5-11pt, name
+  14-16pt. No script/decorative fonts, no Google Fonts import (some ATS text-extraction tools
+  choke on embedded web fonts when printing to PDF).
+- **Consistent bullet character** (a plain `-` rendered as `<li>`) throughout, never mixed.
 - **Consistent date format** — `Mon YYYY – Mon YYYY` (e.g. `Jan 2021 – Mar 2024`) for every
   role, not a mix of formats.
 - **Reverse-chronological order**, most recent role first.
-- **1-2 pages.** Cut content before compressing the font size below 10.5pt or margins below
-  ~0.7".
+- **1-2 pages.** Cut content (see relevance-weighted trimming above) before compressing the
+  font size below 10.5pt or margins below ~15mm.
 - **Plain filename**, no spaces or special characters beyond underscores (already the
-  `[Company]_[Role]_CV.docx` convention above).
+  `[Company]_[Role]_CV.pdf` convention above).
 - Before presenting, do a final self-check: could every line be read correctly if the whole
   document were flattened to plain text top-to-bottom? If a table, column, or text box would
   make that ambiguous, restructure it.
+
+## Optional: print-ready extras
+If the user wants a browser-preview copy too, the same `output/cvs/[Company]_[Role]_CV.html`
+file already serves that purpose — no separate file needed.

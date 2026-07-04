@@ -15,7 +15,7 @@ The AI agent is the engine. The dashboard is your UI. All data stays local on yo
 ## 🏆 Why JobHunter OS? (Key Strengths)
 
 - **Privacy-First & Offline**: Keeping all your career history locally means you aren't feeding PII into a third-party SaaS platform. The dashboard runs completely offline via `localStorage`.
-- **Genuinely ATS-Safe CV Generator**: Most AI wrappers generate resumes that fail Workday or Greenhouse parsers. Our bundled `build_ats_docx.py` script enforces strict ATS rules (no tables, single column, standard fonts) programmatically.
+- **Genuinely ATS-Safe CV Generator**: Most AI wrappers generate resumes that fail Workday or Greenhouse parsers. The bundled `templates/CV_Template.html` + `convert_html_cvs.py` enforce strict ATS rules (no tables, single column, standard fonts) and check the PDF page count before you apply.
 - **Concrete Scoring Rubric**: Instead of random guesswork, the explicit 100-point rubric forces the AI to show its math (Core Skills, Experience, Industry, etc.), making the "Fit Score" actionable.
 - **Dual-Track Tracking**: We offer both a gorgeous HTML Kanban dashboard and a native Excel spreadsheet (`JobHunter_Pipeline.xlsx`). Our sync script intelligently bridges the gap so you can use whichever tool you prefer without breaking formulas.
 - **AI as an Assistant, Not a Replacement**: The system explicitly forces the AI to read *real* job descriptions and forbids fabricating experience. No AI hallucination traps.
@@ -47,7 +47,7 @@ flowchart LR
     end
 
     subgraph out["Generated for you"]
-        L[("leads/\nscraped_leads.json")]
+        L[("leads/\ndata.js")]
         C[("output/cvs/")]
         O[("output/outreach/")]
     end
@@ -74,7 +74,7 @@ No server, no database — files are the contract between the agent and the dash
 
 ![Dashboard preview](assets/dashboard-preview.png)
 
-Every card shows its **fit score** (banded: ≥80 HOT, 70-79 Strong, 60-69 Consider, <60 Low — set by the `score-fit` / `source-jobs` skills) and a one-click **Apply** button that opens the job link and then asks you to confirm whether the application went through, auto-moving the card to "Applied".
+Every card shows its **fit score** (banded: ≥80 HOT, 70-79 Strong, 60-69 Consider, <60 Low — set by the `score-fit` / `source-jobs` skills) and a one-click **Apply** button that opens the job link and then asks you to confirm whether the application went through, auto-moving the card to "Applied". If you mark an application as needing a manual follow-up, the card keeps a **Retry** button (with a small note) in both the Kanban and Table views, so it's never stuck without a way to try again.
 
 *(Sample data shown — yours starts empty and fills up as you use the agent.)*
 
@@ -87,7 +87,7 @@ Every card shows its **fit score** (banded: ≥80 HOT, 70-79 Strong, 60-69 Consi
 - **Pipeline** — the same fields as the dashboard (company, role, fit score, band, status, applied date, job URL), pre-formatted as a table with filters and color-coded score/status bands.
 - **Dashboard** — KPI cards (Total Pipeline, Applied, Interviewing, Offers) plus a status bar chart and a fit-score pie chart, all driven by formulas that recalculate as you add rows to Pipeline. No manual updating.
 
-Ships empty, same as the dashboard — no sample rows to clear out. Just tell your agent "find me jobs and put them in the Excel file" and it appends real leads straight into the Pipeline table (alongside `leads/scraped_leads.json`, so both stay in sync).
+Ships empty, same as the dashboard — no sample rows to clear out. Just tell your agent "find me jobs and put them in the Excel file" and it appends real leads straight into the Pipeline table (alongside `leads/data.js`, so both stay in sync).
 
 ---
 
@@ -100,9 +100,13 @@ Download the ZIP of this repository and extract it to a folder on your computer.
 This works in any AI coding tool, though how well each one auto-discovers the skills varies:
 - **Claude Code / Cowork** — native skill discovery via `.claude/skills/`, the strongest support.
 - **Cursor** — native rule discovery via `.cursor/rules/*.mdc`, also fully wired up.
-- **Antigravity** or anything else — reads `AGENTS.md` and `skills/` directly; if your tool
-  doesn't pick these up on its own, just tell it to "read AGENTS.md and follow the skills in
-  `skills/`" once at the start.
+- **Antigravity** — native skill discovery via `.agents/skills/` (same open SKILL.md standard
+  as Claude Code — the agent sees all 5 skills at the start of every conversation and picks
+  the right one automatically, no need to mention them). One-time setup: open the
+  Customizations panel → Rules, find `.agents/rules/jobhunter.md`, and set it to **Always On**
+  so the core guardrails (real-data-only, fit-score bands) apply without you asking.
+- Anything else — reads `AGENTS.md` and `skills/` directly; if your tool doesn't pick these up
+  on its own, just tell it to "read AGENTS.md and follow the skills in `skills/`" once at the start.
 
 We recommend **Cursor** (free, cursor.com) if you don't already have a preference:
 1. Install Cursor and open it.
@@ -124,7 +128,7 @@ Your AI assistant will introduce itself and ask you to upload your CV, paste you
 - **Excel (`excel/`)**: The `JobHunter_Pipeline.xlsx` spreadsheet for those who prefer native tables. Includes `add_lead.py` to seamlessly sync leads from the AI.
 - **Profile (`profile/`)**: This holds your target roles, experience bank, and preferences. The agent reads this to tailor your CVs and find matching jobs.
 - **Skills (`skills/`)**: The brains of the operation. These markdown files contain the exact prompts and steps the agent follows when you ask it to "find jobs" or "tailor my CV". Editing these files changes the agent's behavior.
-- **Scripts (`scripts/`)**: Core automation scripts, like `build_ats_docx.py`, which enforce deterministic formatting rules (like ATS compliance) so the AI doesn't have to guess.
+- **Scripts (`scripts/`)**: Core automation scripts, like `convert_html_cvs.py`, which enforce deterministic formatting rules (like ATS compliance and page-count checks) so the AI doesn't have to guess. Run `python3 scripts/self_check.py` any time after editing `scripts/`, `dashboard/`, or `skills/` to catch syntax errors and drifted skill mirrors before committing.
 - **Outputs (`output/` & `leads/`)**: The agent saves tailored CVs, cover letters, and scraped job leads into these folders.
 
 ## ✨ Capabilities
@@ -132,7 +136,7 @@ Your AI assistant will introduce itself and ask you to upload your CV, paste you
 Once set up, you can ask your agent to:
 - **"Find me jobs"** → Searches real job boards for your region (web search first, falling back to actually browsing LinkedIn/regional sites if needed) and saves real, live postings to your dashboard — never fabricated.
 - **"Score this job"** → Opens the actual JD and scores your fit (0-100) based on your real experience bank — never guesses from a title alone.
-- **"Tailor my CV"** → Rewrites your CV to specifically target a role you've found, using only what's genuinely in your profile, and outputs a genuinely ATS-safe `.docx` (single column, no tables/graphics, standard fonts and section headings, JD-keyword mirrored) plus an editable Markdown draft — not just something that looks good, something that actually parses cleanly in applicant tracking systems.
+- **"Tailor my CV"** → Rewrites your CV to specifically target a role you've found, using only what's genuinely in your profile, and outputs a genuinely ATS-safe PDF (single column, no tables/graphics, standard fonts and section headings, JD-keyword mirrored, page-count checked) plus an editable Markdown draft — not just something that looks good, something that actually parses cleanly in applicant tracking systems.
 - **"Write outreach"** → Drafts a personalized cover letter and LinkedIn DM sequence for the hiring manager.
 
 ---

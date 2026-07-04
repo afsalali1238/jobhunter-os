@@ -37,12 +37,6 @@ const kpiApplied = document.getElementById('kpi-applied');
 const kpiInterviewing = document.getElementById('kpi-interviewing');
 const kpiOffers = document.getElementById('kpi-offers');
 
-// Import / Export
-const btnExport = document.getElementById('btn-export');
-const btnImport = document.getElementById('btn-import');
-const importFile = document.getElementById('import-file');
-const onboardingImportLink = document.getElementById('onboarding-import-link');
-
 // --- INITIALIZATION ---
 function init() {
     // Auto-load data from data.js
@@ -97,15 +91,19 @@ function saveData() {
 }
 
 // --- EVENT LISTENERS ---
-onboardingForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = document.getElementById('user-name').value;
-    const roles = document.getElementById('target-roles').value;
+// The onboarding modal no longer has a form (it's now instructional-only, pointing the user
+// at their AI agent) — guard this since index.html may or may not include #onboarding-form.
+if (onboardingForm) {
+    onboardingForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('user-name').value;
+        const roles = document.getElementById('target-roles').value;
 
-    profile = { name, roles, createdAt: new Date().toISOString() };
-    saveData();
-    showApp();
-});
+        profile = { name, roles, createdAt: new Date().toISOString() };
+        saveData();
+        showApp();
+    });
+}
 
 btnAddJob.addEventListener('click', () => addJobModal.classList.remove('hidden'));
 closeAddJob.addEventListener('click', () => addJobModal.classList.add('hidden'));
@@ -355,6 +353,10 @@ function renderKanban() {
             const card = document.createElement('div');
             card.className = 'job-card';
             card.dataset.id = job.id;
+            // Mirrors renderTable()'s three apply states (none / Applied* / Manual*) so the
+            // Kanban card never silently loses the ability to retry a manual apply.
+            const isManualApply = !!(job.applyStatus && job.applyStatus.startsWith('Manual'));
+            const showApplyBtn = !job.applyStatus || isManualApply;
             card.innerHTML = `
                 <div class="job-card-top">
                     <div class="job-card-company">${escapeHtml(job.company)}</div>
@@ -362,12 +364,19 @@ function renderKanban() {
                 </div>
                 <div class="job-card-title">${escapeHtml(job.title)}</div>
                 ${job.interviewDate ? `<div class="interview-date"><i class="fa-regular fa-calendar-check"></i> Interview: ${escapeHtml(job.interviewDate)}</div>` : ''}
+                ${isManualApply ? `<div class="manual-apply-note" style="font-size:0.75rem; color:var(--status-applied);"><i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(job.applyStatus)}</div>` : ''}
                 <div class="job-card-meta">
                     <span><i class="fa-regular fa-calendar"></i> ${escapeHtml(job.addedDate)}</span>
                     <div class="job-actions" style="display: flex; gap: 8px;">
                         ${job.url ? `<a href="${safeUrl(job.url)}" target="_blank" class="btn-secondary" style="padding: 4px 8px; font-size: 0.8rem;" title="View Job"><i class="fa-solid fa-external-link"></i></a>` : ''}
                         ${job.cvPath ? `<a href="../${escapeHtml(job.cvPath)}" target="_blank" class="btn-icon" style="color: var(--accent);" title="View Tailored CV"><i class="fa-solid fa-file-pdf"></i></a>` : ''}
-                        ${!job.applyStatus ? `<button onclick="handleApply('${job.id}')" class="btn-secondary" style="padding: 4px 8px; font-size: 0.8rem;" title="Apply"><i class="fa-solid fa-paper-plane"></i></button>` : ''}
+                        
+                        ${!job.applyStatus 
+                            ? `<button onclick="handleApply('${job.id}')" class="btn-secondary" style="padding: 4px 8px; font-size: 0.8rem;" title="Apply"><i class="fa-solid fa-paper-plane"></i></button>`
+                            : job.applyStatus.startsWith('Manual') 
+                                ? `<button onclick="handleApply('${job.id}')" class="btn-secondary" style="padding: 4px 8px; font-size: 0.8rem; border-color: var(--status-applied); color: var(--status-applied);" title="Retry Manual Apply"><i class="fa-solid fa-paper-plane"></i></button>` 
+                                : ''}
+
                         <button onclick="deleteJob('${job.id}')" class="btn-secondary" style="padding: 4px 8px; font-size: 0.8rem;" title="Delete"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
@@ -391,82 +400,6 @@ function renderKanban() {
         }
     });
 }
-
-// --- EXPORT & IMPORT ---
-btnExport.addEventListener('click', () => {
-    const data = {
-        profile,
-        jobs,
-        exportedAt: new Date().toISOString()
-    };
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", `JobHunter_Export_${new Date().toISOString().split('T')[0]}.json`);
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-});
-
-btnImport.addEventListener('click', () => {
-    importFile.click();
-});
-
-if (onboardingImportLink) {
-    onboardingImportLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        importFile.click();
-    });
-}
-
-importFile.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if(!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-        try {
-            const contents = JSON.parse(evt.target.result);
-            // Fix 3: Accept profile:null (agent writes "profile": null in scraped_leads.json)
-            if(contents.jobs && Array.isArray(contents.jobs)) {
-                // Fix 2: Use import profile only if we don't already have one
-                if(!profile && contents.profile) {
-                    profile = contents.profile;
-                }
-
-                // Fix 2 + 5: Merge new jobs, deduplicating by URL (ignoring tracking query params)
-                const existingUrls = new Set(jobs.map(j => normalizeUrl(j.url)));
-                let added = 0;
-                let skipped = 0;
-                contents.jobs.forEach(newJob => {
-                    const normalized = normalizeUrl(newJob.url);
-                    if (normalized && existingUrls.has(normalized)) {
-                        skipped++;
-                    } else {
-                        // Ensure imported jobs have an id
-                        if (!newJob.id) newJob.id = Date.now().toString() + Math.random().toString(36).slice(2, 6);
-                        jobs.push(newJob);
-                        if (normalized) existingUrls.add(normalized);
-                        added++;
-                    }
-                });
-
-                saveData();
-                // If this import came from the onboarding "import instead" link and it carried
-                // a real profile, complete onboarding now instead of leaving the modal up.
-                if (profile && appContainer.classList.contains('hidden')) {
-                    showApp();
-                }
-                alert(`Imported ${added} new job${added !== 1 ? 's' : ''}${skipped > 0 ? ` (${skipped} duplicate${skipped !== 1 ? 's' : ''} skipped)` : ''}.`);
-            } else {
-                alert("Invalid format. Expected a JSON file with a 'jobs' array.");
-            }
-        } catch (err) {
-            alert("Error parsing file: " + err.message);
-        }
-    };
-    reader.readAsText(file);
-});
 
 // Run
 init();

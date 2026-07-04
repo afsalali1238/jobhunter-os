@@ -24,3 +24,7 @@
 
 ## Notice period / availability
 <!-- e.g. Immediately available / 30 days notice -->
+
+## Auto-tailor threshold
+<!-- The fit score (0-100) at or above which your assistant automatically builds a tailored
+     CV for a job it finds, without asking first. Default is 70 if left blank. -->
