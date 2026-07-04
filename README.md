@@ -77,7 +77,7 @@ Every card shows its **fit score** (banded: ≥80 HOT, 70-79 Strong, 60-69 Consi
 - **Pipeline** — the same fields as the dashboard (company, role, fit score, band, status, applied date, job URL), pre-formatted as a table with filters and color-coded score/status bands.
 - **Dashboard** — KPI cards (Total Pipeline, Applied, Interviewing, Offers) plus a status bar chart and a fit-score pie chart, all driven by formulas that recalculate as you add rows to Pipeline. No manual updating.
 
-Ships pre-filled with the same 10 sample rows shown above — clear them and paste in your own leads (or ask your agent to write here instead of `leads/scraped_leads.json`).
+Ships empty, same as the dashboard — no sample rows to clear out. Just tell your agent "find me jobs and put them in the Excel file" and it appends real leads straight into the Pipeline table (alongside `leads/scraped_leads.json`, so both stay in sync).
 
 ---
 
@@ -113,12 +113,14 @@ Your AI assistant will introduce itself and ask you to upload your CV, paste you
 Once set up, you can ask your agent to:
 - **"Find me jobs"** → Searches real job boards for your region (web search first, falling back to actually browsing LinkedIn/regional sites if needed) and saves real, live postings to your dashboard — never fabricated.
 - **"Score this job"** → Opens the actual JD and scores your fit (0-100) based on your real experience bank — never guesses from a title alone.
-- **"Tailor my CV"** → Rewrites your CV to specifically target a role you've found, using only what's genuinely in your profile.
+- **"Tailor my CV"** → Rewrites your CV to specifically target a role you've found, using only what's genuinely in your profile, and outputs a genuinely ATS-safe `.docx` (single column, no tables/graphics, standard fonts and section headings, JD-keyword mirrored) plus an editable Markdown draft — not just something that looks good, something that actually parses cleanly in applicant tracking systems.
 - **"Write outreach"** → Drafts a personalized cover letter and LinkedIn DM sequence for the hiring manager.
 
 ---
 
 *Note: Sync your skills editing in `/skills` as the source of truth across any IDE you use.*
+
+See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 Built by **Afsal Ali** — AI-Ops & Automation.
 [LinkedIn](https://linkedin.com/in/your-handle) · MIT Licensed

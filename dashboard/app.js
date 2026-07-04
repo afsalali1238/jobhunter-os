@@ -97,6 +97,15 @@ addJobForm.addEventListener('submit', (e) => {
     const status = document.getElementById('job-status').value;
     const scoreRaw = document.getElementById('job-score').value;
     const score = scoreRaw === '' ? null : Math.max(0, Math.min(100, parseInt(scoreRaw, 10)));
+    const notes = (document.getElementById('job-notes') || {}).value || '';
+    const interviewDate = (document.getElementById('job-interview-date') || {}).value || null;
+
+    // Fix 5: Check for duplicate URL before adding
+    const normalizedUrl = url.trim().toLowerCase();
+    if (normalizedUrl && jobs.some(j => (j.url || '').trim().toLowerCase() === normalizedUrl)) {
+        alert('A job with this URL already exists in your pipeline.');
+        return;
+    }
 
     const newJob = {
         id: Date.now().toString(),
@@ -105,6 +114,8 @@ addJobForm.addEventListener('submit', (e) => {
         url,
         status,
         score,
+        notes: notes || null,
+        interviewDate: interviewDate || null,
         applyStatus: null,
         addedDate: new Date().toLocaleDateString()
     };
@@ -114,6 +125,27 @@ addJobForm.addEventListener('submit', (e) => {
     addJobModal.classList.add('hidden');
     addJobForm.reset();
 });
+
+// --- URL SAFETY ---
+// Leads can come from an imported JSON file the agent generated, so never trust a URL blindly —
+// only allow http(s) links through to href/window.open. Blocks javascript:, data:, etc.
+function safeUrl(url) {
+    if (typeof url !== 'string') return null;
+    const trimmed = url.trim();
+    return /^https?:\/\//i.test(trimmed) ? trimmed : null;
+}
+
+// Same reasoning for text fields: escape before dropping into innerHTML so an imported
+// lead can't smuggle in markup.
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
 
 // --- FIT SCORE BADGE ---
 // Bands mirror the score-fit skill: >=80 HOT, 70-79 Strong, 60-69 Consider, <60 Low.
@@ -169,7 +201,8 @@ window.handleApply = function(jobId) {
     if (!job) return;
 
     currentApplyJobId = jobId;
-    if (job.url) window.open(job.url, '_blank');
+    const url = safeUrl(job.url);
+    if (url) window.open(url, '_blank', 'noopener,noreferrer');
 
     dialogCompany.textContent = job.company;
     setTimeout(() => {
@@ -220,18 +253,29 @@ function renderTable() {
         if (!job.applyStatus) {
             applyHtml = `<button onclick="handleApply('${job.id}')" class="btn-primary" style="padding: 4px 10px; font-size: 0.75rem;">Apply</button>`;
         } else if (job.applyStatus.startsWith('Applied')) {
-            applyHtml = `<span style="color:var(--status-offer); font-weight:600; font-size:0.8rem;">${job.applyStatus}</span>`;
+            applyHtml = `<span style="color:var(--status-offer); font-weight:600; font-size:0.8rem;">${escapeHtml(job.applyStatus)}</span>`;
         } else if (job.applyStatus.startsWith('Manual')) {
-            applyHtml = `<span style="color:var(--status-applied); font-weight:600; font-size:0.8rem;">${job.applyStatus}</span> <button onclick="handleApply('${job.id}')" style="background:none;border:none;color:var(--accent);cursor:pointer;text-decoration:underline;font-size:0.75rem">Retry</button>`;
+            applyHtml = `<span style="color:var(--status-applied); font-weight:600; font-size:0.8rem;">${escapeHtml(job.applyStatus)}</span> <button onclick="handleApply('${job.id}')" style="background:none;border:none;color:var(--accent);cursor:pointer;text-decoration:underline;font-size:0.75rem">Retry</button>`;
         }
 
+        const jobUrl = safeUrl(job.url);
+        const safeTitle = escapeHtml(job.title);
+        const titleHtml = jobUrl
+            ? `<a href="${jobUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--text); text-decoration:none;">${safeTitle}</a>`
+            : `<span>${safeTitle}</span>`;
+
+        const notesHtml = job.notes
+            ? `<span class="notes-truncated" title="${escapeHtml(job.notes)}">${escapeHtml(job.notes)}</span>`
+            : '<span style="color:var(--text-muted)">—</span>';
+
         tr.innerHTML = `
-            <td><strong>${job.company}</strong></td>
-            <td><a href="${job.url || '#'}" target="_blank" style="color:var(--text); text-decoration:none;">${job.title}</a></td>
+            <td><strong>${escapeHtml(job.company)}</strong></td>
+            <td>${titleHtml}</td>
             <td>${scoreBadgeHtml(job.score)}</td>
-            <td><span class="status-badge badge-${job.status.replace(' ', '-')}">${job.status}</span></td>
-            <td>${job.addedDate}</td>
+            <td><span class="status-badge badge-${job.status.replace(' ', '-')}">${escapeHtml(job.status)}</span></td>
+            <td>${escapeHtml(job.addedDate)}</td>
             <td>${applyHtml}</td>
+            <td>${notesHtml}</td>
             <td>
                 <button class="btn-icon" onclick="deleteJob('${job.id}')"><i class="fa-solid fa-trash"></i></button>
             </td>
@@ -271,12 +315,13 @@ function renderKanban() {
             card.dataset.id = job.id;
             card.innerHTML = `
                 <div class="job-card-top">
-                    <div class="job-card-company">${job.company}</div>
+                    <div class="job-card-company">${escapeHtml(job.company)}</div>
                     ${scoreBadgeHtml(job.score)}
                 </div>
-                <div class="job-card-title">${job.title}</div>
+                <div class="job-card-title">${escapeHtml(job.title)}</div>
+                ${job.interviewDate ? `<div class="interview-date"><i class="fa-regular fa-calendar-check"></i> Interview: ${escapeHtml(job.interviewDate)}</div>` : ''}
                 <div class="job-card-meta">
-                    <span><i class="fa-regular fa-calendar"></i> ${job.addedDate}</span>
+                    <span><i class="fa-regular fa-calendar"></i> ${escapeHtml(job.addedDate)}</span>
                     <div class="job-actions">
                         ${!job.applyStatus ? `<button onclick="handleApply('${job.id}')" title="Apply"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>` : ''}
                         <button onclick="deleteJob('${job.id}')"><i class="fa-solid fa-trash"></i></button>
@@ -331,16 +376,37 @@ importFile.addEventListener('change', (e) => {
     reader.onload = function(evt) {
         try {
             const contents = JSON.parse(evt.target.result);
-            if(contents.profile && contents.jobs) {
-                profile = contents.profile;
-                jobs = contents.jobs;
+            // Fix 3: Accept profile:null (agent writes "profile": null in scraped_leads.json)
+            if(contents.jobs && Array.isArray(contents.jobs)) {
+                // Fix 2: Use import profile only if we don't already have one
+                if(!profile && contents.profile) {
+                    profile = contents.profile;
+                }
+
+                // Fix 2 + 5: Merge new jobs, deduplicating by URL
+                const existingUrls = new Set(jobs.map(j => (j.url || '').trim().toLowerCase()));
+                let added = 0;
+                let skipped = 0;
+                contents.jobs.forEach(newJob => {
+                    const normalizedUrl = (newJob.url || '').trim().toLowerCase();
+                    if (normalizedUrl && existingUrls.has(normalizedUrl)) {
+                        skipped++;
+                    } else {
+                        // Ensure imported jobs have an id
+                        if (!newJob.id) newJob.id = Date.now().toString() + Math.random().toString(36).slice(2, 6);
+                        jobs.push(newJob);
+                        if (normalizedUrl) existingUrls.add(normalizedUrl);
+                        added++;
+                    }
+                });
+
                 saveData();
-                alert("Data imported successfully!");
+                alert(`Imported ${added} new job${added !== 1 ? 's' : ''}${skipped > 0 ? ` (${skipped} duplicate${skipped !== 1 ? 's' : ''} skipped)` : ''}.`);
             } else {
-                alert("Invalid format. Please upload a valid JobHunter OS export file.");
+                alert("Invalid format. Expected a JSON file with a 'jobs' array.");
             }
         } catch (err) {
-            alert("Error parsing file.");
+            alert("Error parsing file: " + err.message);
         }
     };
     reader.readAsText(file);

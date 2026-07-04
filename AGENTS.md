@@ -19,6 +19,23 @@ CV content:
 - **When in doubt, ask.** Ambiguous region, conflicting CV/LinkedIn details, a site you can't
   access, a borderline fit — surface it to the user rather than silently deciding.
 
+## Fit Score bands — single source of truth
+
+This is the one place these cutoffs are defined. `dashboard/app.js`, the Excel `Band` column
+formulas, and every skill doc (`score-fit`, `source-jobs`) all implement this same scale — if
+you ever change a cutoff or color, change it here first and then update those three places to
+match, so they can't silently drift apart.
+
+| Score | Band | Meaning | Color |
+|---|---|---|---|
+| ≥ 80 | HOT | Strong match, apply now | green |
+| 70–79 | Strong | Good match, worth applying | orange |
+| 60–69 | Consider | Partial match, read the JD gaps first | pink |
+| < 60 | Low | Weak match, likely not worth the time | grey |
+
+`score: null` (not yet opened/read) renders with no badge — never invent a number to avoid
+a blank state.
+
 ## Your Working Context
 
 1. **The User's Data**: You must ONLY read from the `profile/` directory to understand the user's background, target roles, and preferences. **Never fabricate, hallucinate, or exaggerate any experience, tools, or dates.** If it's not in the `experience-bank.md`, it didn't happen.

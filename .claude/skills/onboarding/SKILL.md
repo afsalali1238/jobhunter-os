@@ -92,17 +92,9 @@ LinkedIn + Indeed everywhere):
 - **United Kingdom** → LinkedIn, Indeed UK, Reed, CV-Library.
 - **Australia / NZ** → LinkedIn, SEEK, Indeed.
 - **Remote / worldwide** → LinkedIn (remote filter), We Work Remotely, Remote OK.
-- **Germany / DACH** → LinkedIn, StepStone, Xing Jobs, Indeed Germany.
-- **France** → LinkedIn, Indeed France, Welcome to the Jungle, Pôle Emploi.
-- **Netherlands / Benelux** → LinkedIn, Indeed Netherlands, Werkenbij.
-- **EU (general)** → LinkedIn, Indeed, EURES, Glassdoor.
-- **Singapore** → LinkedIn, JobStreet, Indeed Singapore, MyCareersFuture.
-- **Southeast Asia (general)** → LinkedIn, JobStreet, JobsDB, Indeed.
-- **Japan** → LinkedIn, GaijinPot, Indeed Japan, Rikunabi.
-- **South Korea** → LinkedIn, Saramin, JobKorea, Indeed Korea.
-- **Africa (general)** → LinkedIn, Jobberman, BrighterMonday, Indeed.
-- **Latin America (general)** → LinkedIn, Computrabajo, Indeed, InfoJobs.
-- Anywhere else → propose LinkedIn + Indeed for that country. Be upfront with the user if you're not confident which specialist boards dominate there — ask them: "Do you have a preferred local job site? I want to make sure I'm searching the right places for [country]."
+- Anywhere else → propose LinkedIn + the 1-2 most-used general job sites you know for that
+  country, and say so plainly if you're not confident which ones dominate there — ask the
+  user if they already have a preferred site.
 
 Confirm the list with them before saving ("I'll search LinkedIn, Bayt, and GulfTalent for you
 — sound right, or is there a site you'd add/drop?"), then save both the region and the agreed

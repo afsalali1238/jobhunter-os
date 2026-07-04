@@ -74,12 +74,6 @@ inventing a number, and tell the user exactly which ones still need a real read.
 Collect `company`, `title`, the real `url`, and the real `score` (or `null`) for each posting
 into the JSON payload below, and save it to `leads/scraped_leads.json`.
 
-**Deduplication:** Before writing the final JSON, check if `leads/scraped_leads.json` already
-exists. If it does, read it and compare URLs — do not include any posting whose URL already
-appears in the existing file. Append only genuinely new leads to the existing list. Mention to
-the user how many were new vs. already tracked (e.g. *"Found 12 postings — 9 are new, 3 were
-already in your tracker."*).
-
 **If the user has told you they prefer the Excel companion** (`excel/JobHunter_Pipeline.xlsx`)
 over the HTML dashboard, also append each new lead as a new row at the bottom of the
 `PipelineTable` on the **Pipeline** sheet, in the same column order (Company, Role, Fit

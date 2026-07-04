@@ -104,6 +104,7 @@
                             <th>Status</th>
                             <th>Added Date</th>
                             <th>Apply</th>
+                            <th>Notes</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -150,6 +151,14 @@
                         <option value="Offer">Offer</option>
                         <option value="Rejected">Rejected</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label for="job-notes">Notes (optional)</label>
+                    <textarea id="job-notes" rows="2" placeholder="Any notes about this role..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="job-interview-date">Interview Date (optional)</label>
+                    <input type="date" id="job-interview-date">
                 </div>
                 <button type="submit" class="btn-primary w-100">Save Job</button>
             </form>

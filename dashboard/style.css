@@ -282,7 +282,7 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 }
 /* Generate status badge colors dynamically or statically */
 .badge-Scouted { background: rgba(167,169,190,0.15); color: var(--status-scouted); }
-.badge-CV.Ready { background: rgba(242,95,76,0.15); color: var(--status-cvready); }
+.badge-CV-Ready { background: rgba(242,95,76,0.15); color: var(--status-cvready); }
 .badge-Applied { background: rgba(255,137,6,0.15); color: var(--status-applied); }
 .badge-Interviewing { background: rgba(229,49,112,0.15); color: var(--status-interviewing); }
 .badge-Offer { background: rgba(44,182,125,0.15); color: var(--status-offer); }
@@ -290,3 +290,42 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 
 /* Drag and drop ghost */
 .sortable-ghost { opacity: 0.4; }
+
+/* ── NOTES TOOLTIP ─────────────────────────── */
+.notes-truncated {
+  max-width: 180px; white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; color: var(--text-dim); font-size: 0.85rem;
+  cursor: help;
+}
+.interview-date {
+  font-size: 0.75rem; color: var(--accent); font-weight: 600;
+  display: flex; align-items: center; gap: 4px; margin-top: 6px;
+}
+
+/* ── MOBILE RESPONSIVE ─────────────────────── */
+@media (max-width: 1024px) {
+  .kanban-col { flex: 0 0 260px; }
+}
+
+@media (max-width: 768px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .top-nav { margin: 10px; padding: 12px 20px; border-radius: var(--radius); flex-wrap: wrap; gap: 12px; }
+  .nav-actions { flex-wrap: wrap; gap: 10px; }
+  .header-section { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .header-section h1 { font-size: 1.8rem; }
+  .dashboard-content { padding: 0 16px 30px; }
+  .table-view { padding: 12px; }
+  table { font-size: 0.85rem; }
+  th, td { padding: 10px; }
+}
+
+@media (max-width: 480px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+  .kanban-col { flex: 0 0 240px; }
+  .modal-content { padding: 24px; max-width: 100%; }
+  .header-section h1 { font-size: 1.5rem; }
+  .top-nav { padding: 10px 14px; }
+  .logo { font-size: 1rem; }
+  .logo .icon-accent { font-size: 1.2rem; }
+}
+
