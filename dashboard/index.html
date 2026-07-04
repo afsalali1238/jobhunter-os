@@ -100,8 +100,10 @@
                         <tr>
                             <th>Company</th>
                             <th>Role</th>
+                            <th>Fit Score</th>
                             <th>Status</th>
                             <th>Added Date</th>
+                            <th>Apply</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -133,6 +135,10 @@
                 <div class="form-group">
                     <label for="job-url">Job Link / URL</label>
                     <input type="url" id="job-url" placeholder="https://..." required>
+                </div>
+                <div class="form-group">
+                    <label for="job-score">Fit Score (optional, 0-100)</label>
+                    <input type="number" id="job-score" min="0" max="100" placeholder="e.g. 82 — ask your agent to 'score this job'">
                 </div>
                 <div class="form-group">
                     <label for="job-status">Status</label>

@@ -39,14 +39,25 @@ have to touch a settings file or write any code. Just answer its questions like 
 ## 🗺️ What happens after you type "Let's get started"
 
 Your assistant will:
-1. Say hi and ask about you (your experience, target roles, what you want).
-2. Save your answers into your private profile (stored only on *your* computer).
-3. Offer to **find jobs** for you — say *"find me jobs"* anytime.
-4. **Tailor your CV** for any job — say *"tailor my CV for the Careem role"*.
-5. **Write your outreach** — say *"write the cover letter and LinkedIn messages"*.
-6. Show it all on your **dashboard** — double-click `dashboard/index.html` to open it.
+1. Ask you to **upload your CV**, **paste your LinkedIn profile**, or share any other real
+   material (portfolio, certs, whatever you've got) — it builds your profile from that, and
+   only asks questions to fill in what's genuinely missing. It never invents experience.
+2. Ask **where you're job hunting** — job sites are regional, so this decides which boards
+   it searches (LinkedIn + Bayt/GulfTalent for the UAE, LinkedIn + Naukri for India, etc.).
+3. Save everything into your private profile (stored only on *your* computer).
+4. Offer to **find jobs** for you — say *"find me jobs"* anytime. It searches real job boards
+   for real, live postings — falling back to actually browsing LinkedIn/regional sites if
+   bulk search doesn't work — and never fabricates a listing or a link.
+5. **Score jobs for real** — say *"how well do I fit this role?"*. It reads the actual job
+   description, not just the title.
+6. **Tailor your CV** for any job — say *"tailor my CV for the Careem role"*. Built only from
+   what's genuinely in your profile.
+7. **Write your outreach** — say *"write the cover letter and LinkedIn messages"*.
+8. Show it all on your **dashboard** — double-click `dashboard/index.html` to open it.
 
-You're always in control. Nothing is sent anywhere or posted on your behalf.
+You're always in control. Nothing is sent anywhere or posted on your behalf. And if your
+assistant can't do something for real (no web access, can't reach a site), it'll tell you
+instead of faking it.
 
 ---
 

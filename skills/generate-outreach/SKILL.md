@@ -13,8 +13,10 @@ When the user asks you to "write the outreach for [Company]", "draft a cover let
 3. The user's preferred tone from `profile/preferences.md`.
 
 ## Steps
-1. Read the user's experience and their preferred outreach tone.
-2. Analyze the job to determine the most relevant angle for outreach.
+1. Read the user's experience and their preferred outreach tone. Only draw on facts already
+   in `profile/experience-bank.md` or the matching tailored CV in `output/cvs/` — don't
+   introduce new claims here that weren't already established there.
+2. Get the real job description (open the link, or use pasted/tracked JD text) and analyze it to determine the most relevant angle for outreach.
 3. Write a concise, impactful Cover Letter (under 250 words) that highlights 1-2 major relevant wins.
 4. Write a 2-part LinkedIn DM sequence for the Hiring Manager:
    - **Message 1**: Connection request (under 300 characters). Mention the role and a quick hook.

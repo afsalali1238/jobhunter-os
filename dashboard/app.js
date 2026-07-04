@@ -54,12 +54,12 @@ function init() {
 function showApp() {
     onboardingModal.classList.add('hidden');
     appContainer.classList.remove('hidden');
-    
+
     // Set Profile Data
     displayName.textContent = profile.name;
     greeting.textContent = `Hello, ${profile.name}!`;
     displayRoles.textContent = profile.roles;
-    
+
     renderApp();
 }
 
@@ -80,7 +80,7 @@ onboardingForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = document.getElementById('user-name').value;
     const roles = document.getElementById('target-roles').value;
-    
+
     profile = { name, roles, createdAt: new Date().toISOString() };
     saveData();
     showApp();
@@ -95,22 +95,41 @@ addJobForm.addEventListener('submit', (e) => {
     const title = document.getElementById('job-title').value;
     const url = document.getElementById('job-url').value;
     const status = document.getElementById('job-status').value;
-    
+    const scoreRaw = document.getElementById('job-score').value;
+    const score = scoreRaw === '' ? null : Math.max(0, Math.min(100, parseInt(scoreRaw, 10)));
+
     const newJob = {
         id: Date.now().toString(),
         company,
         title,
         url,
         status,
+        score,
         applyStatus: null,
         addedDate: new Date().toLocaleDateString()
     };
-    
+
     jobs.push(newJob);
     saveData();
     addJobModal.classList.add('hidden');
     addJobForm.reset();
 });
+
+// --- FIT SCORE BADGE ---
+// Bands mirror the score-fit skill: >=80 HOT, 70-79 Strong, 60-69 Consider, <60 Low.
+function scoreBand(score) {
+    if (score >= 80) return { label: 'HOT', cls: 'score-hot' };
+    if (score >= 70) return { label: 'STRONG', cls: 'score-strong' };
+    if (score >= 60) return { label: 'CONSIDER', cls: 'score-consider' };
+    return { label: 'LOW', cls: 'score-low' };
+}
+function scoreBadgeHtml(score) {
+    if (score === null || score === undefined || score === '') {
+        return `<span class="score-badge score-none">&mdash;</span>`;
+    }
+    const band = scoreBand(score);
+    return `<span class="score-badge ${band.cls}">${score} &middot; ${band.label}</span>`;
+}
 
 // View Toggles
 viewKanbanBtn.addEventListener('click', () => {
@@ -148,10 +167,10 @@ function updateJobStatus(id, newStatus) {
 window.handleApply = function(jobId) {
     const job = jobs.find(j => j.id === jobId);
     if (!job) return;
-    
+
     currentApplyJobId = jobId;
     if (job.url) window.open(job.url, '_blank');
-    
+
     dialogCompany.textContent = job.company;
     setTimeout(() => {
         applyDialog.classList.remove('hidden');
@@ -169,10 +188,10 @@ function markApplyState(state) {
     if (job) {
         if (state === 'success') {
             const today = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-            job.applyStatus = `✅ Applied ${today}`;
+            job.applyStatus = `Applied ${today}`;
             job.status = 'Applied'; // Auto-move to Applied
         } else if (state === 'manual') {
-            job.applyStatus = `⚠️ Manual Apply Required`;
+            job.applyStatus = `Manual Apply Required`;
         }
         saveData();
     }
@@ -193,30 +212,23 @@ function updateKPIs() {
 function renderTable() {
     const tbody = document.getElementById('table-body');
     tbody.innerHTML = '';
-    
-    // Check if table header needs an update
-    const theadTr = document.querySelector('thead tr');
-    if (theadTr && theadTr.children.length === 5) {
-        const applyTh = document.createElement('th');
-        applyTh.textContent = 'Apply';
-        theadTr.insertBefore(applyTh, theadTr.lastElementChild);
-    }
-    
+
     jobs.forEach(job => {
         const tr = document.createElement('tr');
-        
+
         let applyHtml = '';
         if (!job.applyStatus) {
-            applyHtml = `<button onclick="handleApply('${job.id}')" class="btn-primary" style="padding: 4px 10px; font-size: 0.75rem;">🚀 Apply</button>`;
-        } else if (job.applyStatus.startsWith('✅')) {
+            applyHtml = `<button onclick="handleApply('${job.id}')" class="btn-primary" style="padding: 4px 10px; font-size: 0.75rem;">Apply</button>`;
+        } else if (job.applyStatus.startsWith('Applied')) {
             applyHtml = `<span style="color:var(--status-offer); font-weight:600; font-size:0.8rem;">${job.applyStatus}</span>`;
-        } else if (job.applyStatus.startsWith('⚠️')) {
+        } else if (job.applyStatus.startsWith('Manual')) {
             applyHtml = `<span style="color:var(--status-applied); font-weight:600; font-size:0.8rem;">${job.applyStatus}</span> <button onclick="handleApply('${job.id}')" style="background:none;border:none;color:var(--accent);cursor:pointer;text-decoration:underline;font-size:0.75rem">Retry</button>`;
         }
-        
+
         tr.innerHTML = `
             <td><strong>${job.company}</strong></td>
             <td><a href="${job.url || '#'}" target="_blank" style="color:var(--text); text-decoration:none;">${job.title}</a></td>
+            <td>${scoreBadgeHtml(job.score)}</td>
             <td><span class="status-badge badge-${job.status.replace(' ', '-')}">${job.status}</span></td>
             <td>${job.addedDate}</td>
             <td>${applyHtml}</td>
@@ -230,14 +242,16 @@ function renderTable() {
 
 function renderKanban() {
     viewKanban.innerHTML = '';
-    
+
     COLUMNS.forEach(colName => {
-        const colJobs = jobs.filter(j => j.status === colName);
+        const colJobs = jobs
+            .filter(j => j.status === colName)
+            .sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
         const colDiv = document.createElement('div');
         const colClassSafe = colName.toLowerCase().replace(' ', '-');
         colDiv.className = `kanban-col col-${colClassSafe}`;
         colDiv.dataset.status = colName;
-        
+
         colDiv.innerHTML = `
             <div class="col-header">
                 <span>${colName}</span>
@@ -246,28 +260,32 @@ function renderKanban() {
             <div class="col-body" id="col-${colClassSafe}">
             </div>
         `;
-        
+
         viewKanban.appendChild(colDiv);
-        
+
         const colBody = colDiv.querySelector('.col-body');
-        
+
         colJobs.forEach(job => {
             const card = document.createElement('div');
             card.className = 'job-card';
             card.dataset.id = job.id;
             card.innerHTML = `
-                <div class="job-card-company">${job.company}</div>
+                <div class="job-card-top">
+                    <div class="job-card-company">${job.company}</div>
+                    ${scoreBadgeHtml(job.score)}
+                </div>
                 <div class="job-card-title">${job.title}</div>
                 <div class="job-card-meta">
                     <span><i class="fa-regular fa-calendar"></i> ${job.addedDate}</span>
                     <div class="job-actions">
+                        ${!job.applyStatus ? `<button onclick="handleApply('${job.id}')" title="Apply"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>` : ''}
                         <button onclick="deleteJob('${job.id}')"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             `;
             colBody.appendChild(card);
         });
-        
+
         // Initialize Sortable
         if (typeof Sortable !== 'undefined') {
             new Sortable(colBody, {
@@ -308,7 +326,7 @@ btnImport.addEventListener('click', () => {
 importFile.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if(!file) return;
-    
+
     const reader = new FileReader();
     reader.onload = function(evt) {
         try {

@@ -4,9 +4,10 @@
 > cover letters, outreach — is built **only** from what's in this file. It never invents
 > experience you don't have.
 >
-> You don't have to fill this in by hand. Just type **"Let's get started"** to your
-> assistant and it will interview you and fill this in for you. Or paste your CV below
-> and say *"turn this into my experience bank."*
+> You don't have to fill this in by hand. Just type **"Let's get started"** and your
+> assistant will ask you to upload your CV, paste your LinkedIn profile, or share any other
+> real material — then build this file from that, and only ask you questions to fill
+> whatever's still missing.
 
 ---
 
@@ -64,6 +65,13 @@
 ## Wins & Proof (anything you're proud of — projects, awards, metrics, side projects)
 -
 -
+
+---
+
+## Source documents
+<!-- Your assistant fills this in during onboarding — a record of what this profile was
+     actually built from, so it's always traceable and never guesswork.
+     e.g. "Built from: uploaded CV (resume.pdf) + LinkedIn profile paste — 2026-07-04" -->
 
 ---
 *Tip: the more specific and number-backed this is, the stronger your tailored CVs will be.*

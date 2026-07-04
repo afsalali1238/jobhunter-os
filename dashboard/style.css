@@ -239,12 +239,26 @@ button {
 .job-card:hover {
   transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
-.job-card-company { font-weight: 700; margin-bottom: 4px; font-size: 1.1rem; }
+.job-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 4px; }
+.job-card-company { font-weight: 700; font-size: 1.1rem; }
 .job-card-title { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 12px; }
 .job-card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted); }
 .job-actions { display: flex; gap: 8px; }
 .job-actions button { padding: 4px; font-size: 0.9rem; background: transparent; color: var(--text-dim); }
 .job-actions button:hover { color: var(--accent2); }
+
+/* ── FIT SCORE BADGES ───────────────────────── */
+/* Bands mirror the score-fit skill: >=80 HOT, 70-79 Strong, 60-69 Consider, <60 Low. */
+.score-badge {
+  display: inline-block; padding: 2px 9px; border-radius: 10px;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.score-hot { background: rgba(44,182,125,0.15); color: var(--status-offer); }
+.score-strong { background: rgba(255,137,6,0.15); color: var(--accent); }
+.score-consider { background: rgba(229,49,112,0.15); color: var(--accent3); }
+.score-low { background: rgba(111,114,135,0.15); color: var(--text-muted); }
+.score-none { background: transparent; color: var(--text-muted); font-weight: 400; }
 
 /* Column border tops */
 .col-scouted { border-top: 3px solid var(--status-scouted); }
