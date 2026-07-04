@@ -158,3 +158,18 @@ own native skill-discovery and rules system, and this repo wasn't using either.
   PDF's content stream. Replaced with a single inline line per row (`{{JOB_TITLE}} —
   {{DATES}}`), which reads correctly regardless of how a parser walks the page. Applied to the
   Experience rows and the Projects section, which used the same pattern.
+
+## v1.6 — 2026-07-05 (real-world job-board blocking, closed the loop)
+
+Prompted by an actual run: searching Pharmacist roles in Dubai hit LinkedIn/Bayt/Indeed
+blocking automated readers on the individual job pages. The agent correctly refused to guess
+a score — that part worked as designed — but it jumped straight to "paste it here" instead of
+trying the browser it likely already had access to.
+
+- **`source-jobs` step 5 now escalates to real browser navigation before giving up.** Order is
+  now: fast read → if blocked/thin/a JS shell, navigate there with real browser tooling (Chrome
+  extension / browser MCP / IDE browser) one posting at a time and read the rendered page →
+  only if *both* fail (no browser tool this session, a login wall, a real CAPTCHA) mark
+  `score: null` and ask the user to paste the JD or drop a PDF. Manual paste is now explicitly
+  the last resort, not the first response to a block.
+- Synced this change across `.claude/skills/`, `.cursor/rules/`, and `.agents/skills/`.

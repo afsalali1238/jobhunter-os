@@ -62,13 +62,28 @@ surfaced more real candidates than the cap:
    and scored the top 15 by title match. Want me to go through more?"* Never quietly drop
    the rest without saying so.
 
-### 5. Score for real — open the actual JD
-For each posting that made the cut, open the actual job description (the real page/link) and
-run the same evaluation as the **score-fit** skill against `profile/experience-bank.md`.
+### 5. Score for real — open the actual JD (escalate before giving up)
+For each posting that made the cut, get the real job description text using this order —
+don't skip straight to asking the user just because the first attempt was blocked:
+1. **Fast read first.** Try opening the real link with whatever quick fetch/read tool you
+   have in this session.
+2. **If that's blocked, thin, or clearly a JS shell** (login wall, "enable JavaScript",
+   boilerplate nav with no JD body, suspiciously empty content) — this is the normal failure
+   mode for LinkedIn/Bayt/Indeed and other boards that actively block simple automated
+   readers, not a reason to stop — **escalate to real browser tooling** (a Chrome extension /
+   browser MCP, or your IDE's built-in browser) and go through the blocked postings **one by
+   one**: navigate to the real URL, let the page actually render, and read the real content
+   off the rendered page, the same way a person would. Don't give up after a single failed
+   fetch if a real browser tool is available to you this session.
+3. Only if a posting is still unreadable after trying **both** a fast read and real browser
+   navigation — no browser tool available at all this session, a login wall you can't get
+   past, or a genuine CAPTCHA/bot-check that blocks even the browser — save it with
+   `"score": null` and tell the user exactly which ones still need a manual look (see step 8),
+   rather than guessing.
+
+Run the same evaluation as the **score-fit** skill against `profile/experience-bank.md`.
 **Do not score from the title or a search snippet alone** — that's a guess wearing a number,
-and the user relies on this score to decide where to spend their time. If you genuinely run
-out of turn budget partway through, save the remainder with `"score": null` rather than
-inventing a number, and tell the user exactly which ones still need a real read.
+and the user relies on this score to decide where to spend their time.
 
 ### 6. Build the output
 Collect `company`, `title`, the real `url`, and the real `score` (or `null`) for each posting
@@ -102,27 +117,4 @@ unless the user says they only want Excel.
 Check `profile/preferences.md` for the user's auto-tailor threshold (e.g., 70+).
 For any new job you found that scores at or above this threshold, **automatically invoke the `tailor-cv` skill** for that job before returning to the user. You do not need to ask permission for this.
 
-### 8. Hand off honestly
-Tell the user how many real postings you found and from where (e.g. "12 real postings from
-LinkedIn and Bayt — opened and scored 9 of them, 3 still need a manual look"). Tell them which
-jobs met their threshold and had CVs auto-tailored. Ask them to
-refresh their dashboard `dashboard/index.html` (or check the Excel file). Surface the top 2-3 scored HOT so they know where to start. 
-
-**Crucially**, tell them: *"If you want me to tailor a CV for any of the other jobs, please go to the job page, click 'Save to PDF' (or copy the text), and drop it here. (LinkedIn blocks automated reading, so dropping the PDF is the best way to ensure I get the exact keywords!)"*
-
-## Output Format (`leads/data.js`)
-You must output a Javascript file containing the jobs in this exact structure:
-
-```javascript
-window.JOBHUNTER_DATA = {
-  "profile": null,
-  "jobs": [
-    {
-      "id": "1710000000000",
-      "company": "Example Corp",
-      "title": "Software Engineer",
-      "url": "https://linkedin.com/jobs/view/12345",
-      "score": 82,
-      "status": "Scouted",
-      "applyStatus": null,
-      "addedDate": "MM/DD/YYYY
+### 8. H
