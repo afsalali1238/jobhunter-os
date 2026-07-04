@@ -141,5 +141,4 @@ Once set up, you can ask your agent to:
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 
-Built by **Afsal Ali** — AI-Ops & Automation.
-[LinkedIn](https://linkedin.com/in/afsalali1238) · MIT Licensed
+MIT Licensed

@@ -85,7 +85,4 @@ support for auto-discovering the skills just varies by tool:
 
 All of them follow the same underlying instructions (`AGENTS.md` + `skills/`), so the
 experience should feel the same either way — Claude and Cursor just get there automatically.
-
----
-
-*Built by **Afsal Ali** — AI-Ops & automation. Find me on LinkedIn: [linkedin.com/in/your-handle](https://linkedin.com/in/your-handle).*
+See `README.md` for a flowchart of how all the pieces connect, or double-click `dashboard/index.html` to see the UI.
